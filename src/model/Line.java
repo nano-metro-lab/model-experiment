@@ -3,7 +3,6 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.UnaryOperator;
 
 public class Line {
@@ -96,7 +95,7 @@ public class Line {
           continue;
         }
         RoutesMap transferRoutesMap = node.station.getRoutesMap();
-        Set<Route> transferRoutes = transferRoutesMap.get(destination);
+        List<Route> transferRoutes = transferRoutesMap.get(destination);
         if (transferRoutes.isEmpty()) {
           continue;
         }

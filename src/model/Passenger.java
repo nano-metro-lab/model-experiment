@@ -2,8 +2,8 @@ package model;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public class Passenger {
   private final StationType finalDestination;
@@ -40,7 +40,7 @@ public class Passenger {
 
   private Optional<Route> findRoute(Train train) {
     RoutesMap routesMap = currentStation.getRoutesMap();
-    Set<Route> routes = routesMap.get(finalDestination);
+    List<Route> routes = routesMap.get(finalDestination);
     for (Route route : routes) {
       if (route.start() == train.getNextStation()) {
         return Optional.of(route);

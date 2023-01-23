@@ -1,10 +1,13 @@
 package model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RoutesMap {
   private final Station station;
-  private final Map<StationType, Set<Route>> map = new HashMap<>();
+  private final Map<StationType, List<Route>> map = new HashMap<>();
 
   public RoutesMap(Station station) {
     this.station = station;
@@ -14,25 +17,25 @@ public class RoutesMap {
     map.clear();
   }
 
-  public Set<Route> get(StationType destination) {
+  public List<Route> get(StationType destination) {
     if (!map.containsKey(destination)) {
       // prevent infinite loop
-      map.put(destination, new HashSet<>());
-      Set<Route> routes = getRoutes(destination);
+      map.put(destination, List.of());
+      List<Route> routes = getRoutes(destination);
       map.put(destination, routes);
-      return Set.copyOf(routes);
+      return routes;
     }
-    return Set.copyOf(map.get(destination));
+    return map.get(destination);
   }
 
-  private Set<Route> getRoutes(StationType destination) {
-    Set<Route> routes = new HashSet<>();
+  private List<Route> getRoutes(StationType destination) {
+    List<Route> routes = new ArrayList<>();
     for (Line line : station.getLines()) {
       List<Route> routesFromLeft = line.findRoutesFromLeft(station, destination);
       routes.addAll(routesFromLeft);
       List<Route> routesFromRight = line.findRoutesFromRight(station, destination);
       routes.addAll(routesFromRight);
     }
-    return routes;
+    return List.copyOf(routes);
   }
 }
