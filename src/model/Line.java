@@ -31,7 +31,9 @@ public class Line {
   private StationNode endNode;
 
   public Line(Station startStation, Station endStation) {
+    startStation.addLine(this);
     startNode = new StationNode(startStation, null, null);
+    endStation.addLine(this);
     endNode = new StationNode(endStation, null, null);
     startNode.right = endNode;
     endNode.left = startNode;
