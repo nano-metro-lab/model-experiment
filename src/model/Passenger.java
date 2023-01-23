@@ -12,6 +12,7 @@ public class Passenger {
 
   public Passenger(Station station, StationType destination) {
     currentStation = station;
+    currentStation.addPassenger(this);
     finalDestination = destination;
   }
 
@@ -54,8 +55,8 @@ public class Passenger {
     currentTrain = null;
     destinations.pop();
     if (!destinations.isEmpty()) {
-      station.addPassenger(this);
       currentStation = station;
+      currentStation.addPassenger(this);
       destinations.clear();
     }
   }
