@@ -33,8 +33,7 @@ public class Train {
   }
 
   public void start() {
-    Passenger[] passengersAtStation = currStation.getPassengers();
-    for (Passenger passenger : passengersAtStation) {
+    for (Passenger passenger : currStation.getPassengers()) {
       passenger.boardIfPossible(this);
     }
     prevStation = currStation;
@@ -43,7 +42,7 @@ public class Train {
 
   public void stop() {
     currStation = nextStation;
-    for (Passenger passenger : passengers) {
+    for (Passenger passenger : getPassengers()) {
       passenger.arriveAt(currStation);
     }
     nextStation = line.getNextStation(prevStation, currStation);
