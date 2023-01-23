@@ -11,9 +11,14 @@ public class Train {
   private Station nextStation;
 
   public Train(Line line, Station station) {
+    this(line, station, null);
+  }
+
+  public Train(Line line, Station station, Station prevStation) {
     this.line = line;
+    this.prevStation = prevStation;
     currStation = station;
-    nextStation = line.getNextStation(currStation, null);
+    nextStation = line.getNextStation(currStation, prevStation);
   }
 
   public Passenger[] getPassengers() {
