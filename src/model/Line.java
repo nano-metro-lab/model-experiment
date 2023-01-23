@@ -80,7 +80,7 @@ public class Line {
     StationNode node = adjacentNode;
     while (node != null) {
       if (node.station.getType() == destination) {
-        Route route = new Route(station, node.station, 0, distance);
+        Route route = new Route(adjacentNode.station, node.station, 0, distance);
         return Optional.of(route);
       }
       distance += 1;
@@ -101,7 +101,7 @@ public class Line {
         }
         int averageTransferTime = Route.getAverageTransferTime(transferRoutes);
         int averageLength = Route.getAverageLength(transferRoutes);
-        Route route = new Route(station, node.station, 1 + averageTransferTime, distance + averageLength);
+        Route route = new Route(adjacentNode.station, node.station, 1 + averageTransferTime, distance + averageLength);
         routes.add(route);
       }
       distance += 1;
