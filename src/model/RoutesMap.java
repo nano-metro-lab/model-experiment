@@ -4,7 +4,7 @@ import java.util.*;
 
 public class RoutesMap {
   private final Station station;
-  private final Map<StationType, List<Route>> map = new HashMap<>();
+  private final Map<StationType, Set<Route>> map = new HashMap<>();
 
   public RoutesMap(Station station) {
     this.station = station;
@@ -14,19 +14,19 @@ public class RoutesMap {
     map.clear();
   }
 
-  public Route[] get(StationType destination) {
+  public Set<Route> get(StationType destination) {
     if (!map.containsKey(destination)) {
       // prevent infinite loop
-      map.put(destination, new ArrayList<>());
-      List<Route> routes = getRoutes(destination);
+      map.put(destination, new HashSet<>());
+      Set<Route> routes = getRoutes(destination);
       map.put(destination, routes);
-      return routes.toArray(Route[]::new);
+      return Set.copyOf(routes);
     }
-    return map.get(destination).toArray(Route[]::new);
+    return Set.copyOf(map.get(destination));
   }
 
-  private List<Route> getRoutes(StationType destination) {
-    List<Route> routes = new ArrayList<>();
+  private Set<Route> getRoutes(StationType destination) {
+    Set<Route> routes = new HashSet<>();
     for (Line line : station.getLines()) {
       List<Route> routesFromLeft = line.findRoutesFromLeft(station, destination);
       routes.addAll(routesFromLeft);

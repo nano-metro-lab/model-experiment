@@ -1,19 +1,19 @@
 package model;
 
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.function.Function;
 
 public record Route(Station start, Station transferOrEnd, int transferTime, int length) implements Comparable<Route> {
-  public static int getAverageTransferTime(Route[] routes) {
+  public static int getAverageTransferTime(Collection<Route> routes) {
     return getAverage(routes, Route::transferTime);
   }
 
-  public static int getAverageLength(Route[] routes) {
+  public static int getAverageLength(Collection<Route> routes) {
     return getAverage(routes, Route::length);
   }
 
-  private static int getAverage(Route[] routes, Function<Route, Integer> mapper) {
-    double average = (double) Arrays.stream(routes).map(mapper).reduce(0, Integer::sum) / routes.length;
+  private static int getAverage(Collection<Route> routes, Function<Route, Integer> mapper) {
+    double average = (double) routes.stream().map(mapper).reduce(0, Integer::sum) / routes.size();
     return (int) Math.round(average);
   }
 
