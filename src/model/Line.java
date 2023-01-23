@@ -63,30 +63,30 @@ public class Line {
     station.addLine(this);
   }
 
-  public Optional<Route> findRouteFromLeft(Station station, StationType destination) {
-    return findRoute(station, destination, node -> node.left);
+  public List<Route> findRoutesFromLeft(Station station, StationType destination) {
+    return findRoutes(station, destination, node -> node.left);
   }
 
-  public Optional<Route> findRouteFromRight(Station station, StationType destination) {
-    return findRoute(station, destination, node -> node.right);
+  public List<Route> findRoutesFromRight(Station station, StationType destination) {
+    return findRoutes(station, destination, node -> node.right);
   }
 
-  private Optional<Route> findRoute(Station station, StationType destination, UnaryOperator<StationNode> getAdjacentNode) {
+  private List<Route> findRoutes(Station station, StationType destination, UnaryOperator<StationNode> getAdjacentNode) {
     final StationNode adjacentNode = getAdjacentNode.apply(getNode(station));
     if (adjacentNode == null) {
-      return Optional.empty();
+      return List.of();
     }
     int distance = 1;
     StationNode node = adjacentNode;
     while (node != null) {
       if (node.station.getType() == destination) {
         Route route = new Route(adjacentNode.station, node.station, 0, distance);
-        return Optional.of(route);
+        return List.of(route);
       }
       distance += 1;
       node = getAdjacentNode.apply(node);
     }
-    List<Route> routes = new ArrayList<>();
+    List<Route> possibleRoutes = new ArrayList<>();
     distance = 1;
     node = adjacentNode;
     while (node != null) {
@@ -102,12 +102,24 @@ public class Line {
         int averageTransferTime = Route.getAverageTransferTime(transferRoutes);
         int averageLength = Route.getAverageLength(transferRoutes);
         Route route = new Route(adjacentNode.station, node.station, 1 + averageTransferTime, distance + averageLength);
-        routes.add(route);
+        possibleRoutes.add(route);
       }
       distance += 1;
       node = getAdjacentNode.apply(node);
     }
-    return routes.stream().sorted().findFirst();
+    if (possibleRoutes.isEmpty()) {
+      return List.of();
+    }
+    List<Route> routes = new ArrayList<>();
+    List<Route> sortedPossibleRoutes = possibleRoutes.stream().sorted().toList();
+    Route shortestRoute = sortedPossibleRoutes.get(0);
+    for (Route route : sortedPossibleRoutes) {
+      if (!route.equals(shortestRoute)) {
+        break;
+      }
+      routes.add(route);
+    }
+    return List.copyOf(routes);
   }
 
   private StationNode getNode(Station station) {

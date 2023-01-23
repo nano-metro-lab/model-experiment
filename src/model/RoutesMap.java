@@ -28,10 +28,10 @@ public class RoutesMap {
   private List<Route> getRoutes(StationType destination) {
     List<Route> routes = new ArrayList<>();
     for (Line line : station.getLines()) {
-      Optional<Route> routeFromLeft = line.findRouteFromLeft(station, destination);
-      routeFromLeft.ifPresent(routes::add);
-      Optional<Route> routeFromRight = line.findRouteFromRight(station, destination);
-      routeFromRight.ifPresent(routes::add);
+      List<Route> routesFromLeft = line.findRoutesFromLeft(station, destination);
+      routes.addAll(routesFromLeft);
+      List<Route> routesFromRight = line.findRoutesFromRight(station, destination);
+      routes.addAll(routesFromRight);
     }
     return routes;
   }

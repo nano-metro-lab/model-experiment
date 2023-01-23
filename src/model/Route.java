@@ -18,11 +18,19 @@ public record Route(Station start, Station transferOrEnd, int transferTime, int 
   }
 
   @Override
-  public int compareTo(Route route) {
-    int transferTimeDifference = transferTime - route.transferTime();
+  public int compareTo(Route that) {
+    int transferTimeDifference = this.transferTime - that.transferTime;
     if (transferTimeDifference != 0) {
       return transferTimeDifference;
     }
-    return length - route.length();
+    return this.length - that.length;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) return true;
+    if (obj == null || obj.getClass() != this.getClass()) return false;
+    var that = (Route) obj;
+    return this.transferTime == that.transferTime && this.length == that.length;
   }
 }
