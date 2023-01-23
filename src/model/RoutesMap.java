@@ -31,10 +31,8 @@ public class RoutesMap {
   private List<Route> getRoutes(StationType destination) {
     List<Route> routes = new ArrayList<>();
     for (Line line : station.getLines()) {
-      List<Route> routesFromLeft = line.findRoutesFromLeft(station, destination);
-      routes.addAll(routesFromLeft);
-      List<Route> routesFromRight = line.findRoutesFromRight(station, destination);
-      routes.addAll(routesFromRight);
+      line.findRouteFromLeft(station, destination).ifPresent(routes::add);
+      line.findRouteFromRight(station, destination).ifPresent(routes::add);
     }
     return List.copyOf(routes);
   }

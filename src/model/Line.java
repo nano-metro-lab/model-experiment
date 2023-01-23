@@ -63,25 +63,25 @@ public class Line {
     station.addLine(this);
   }
 
-  public List<Route> findRoutesFromLeft(Station station, StationType destination) {
-    return findRoutes(station, destination, node -> node.left);
+  public Optional<Route> findRouteFromLeft(Station station, StationType destination) {
+    return findRoute(station, destination, node -> node.left);
   }
 
-  public List<Route> findRoutesFromRight(Station station, StationType destination) {
-    return findRoutes(station, destination, node -> node.right);
+  public Optional<Route> findRouteFromRight(Station station, StationType destination) {
+    return findRoute(station, destination, node -> node.right);
   }
 
-  private List<Route> findRoutes(Station station, StationType destination, UnaryOperator<StationNode> getAdjacentNode) {
+  private Optional<Route> findRoute(Station station, StationType destination, UnaryOperator<StationNode> getAdjacentNode) {
     final StationNode adjacentNode = getAdjacentNode.apply(getNode(station));
     if (adjacentNode == null) {
-      return List.of();
+      return Optional.empty();
     }
     int distance = 1;
     StationNode node = adjacentNode;
     while (node != null) {
       if (node.station.getType() == destination) {
         Route route = new Route(adjacentNode.station, node.station, 0, distance);
-        return List.of(route);
+        return Optional.of(route);
       }
       distance += 1;
       node = getAdjacentNode.apply(node);
@@ -107,19 +107,7 @@ public class Line {
       distance += 1;
       node = getAdjacentNode.apply(node);
     }
-    if (possibleRoutes.isEmpty()) {
-      return List.of();
-    }
-    List<Route> routes = new ArrayList<>();
-    List<Route> sortedPossibleRoutes = possibleRoutes.stream().sorted().toList();
-    Route shortestRoute = sortedPossibleRoutes.get(0);
-    for (Route route : sortedPossibleRoutes) {
-      if (!route.equals(shortestRoute)) {
-        break;
-      }
-      routes.add(route);
-    }
-    return List.copyOf(routes);
+    return possibleRoutes.stream().sorted().findFirst();
   }
 
   private StationNode getNode(Station station) {
