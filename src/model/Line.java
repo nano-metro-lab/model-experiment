@@ -40,7 +40,7 @@ public class Line {
     endNode.left = startNode;
   }
 
-  public Station getNextStation(Station prevStation, Station currStation) {
+  public Station getNextStation(Station currStation, Station prevStation) {
     StationNode prevNode = Optional.ofNullable(prevStation).map(this::getNode).orElse(null);
     StationNode currNode = getNode(currStation);
     StationNode nextNode = currNode.getNext(prevNode);

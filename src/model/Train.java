@@ -13,7 +13,7 @@ public class Train {
   public Train(Line line, Station station) {
     this.line = line;
     currStation = station;
-    nextStation = line.getNextStation(null, currStation);
+    nextStation = line.getNextStation(currStation, null);
   }
 
   public Passenger[] getPassengers() {
@@ -45,6 +45,6 @@ public class Train {
     for (Passenger passenger : getPassengers()) {
       passenger.arriveAt(currStation);
     }
-    nextStation = line.getNextStation(prevStation, currStation);
+    nextStation = line.getNextStation(currStation, prevStation);
   }
 }
