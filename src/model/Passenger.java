@@ -33,8 +33,8 @@ public class Passenger {
     }
     currentStation.removePassenger(this);
     currentStation = null;
-    train.addPassenger(this);
     currentTrain = train;
+    currentTrain.addPassenger(this);
   }
 
   private Optional<Route> findRoute(Train train) {
@@ -53,9 +53,9 @@ public class Passenger {
     }
     currentTrain.removePassenger(this);
     currentTrain = null;
+    currentStation = station;
     destinations.pop();
     if (!destinations.isEmpty()) {
-      currentStation = station;
       currentStation.addPassenger(this);
       destinations.clear();
     }
