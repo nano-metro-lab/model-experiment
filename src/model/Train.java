@@ -33,12 +33,19 @@ public class Train {
   }
 
   public void start() {
+    Passenger[] passengersAtStation = currStation.getPassengers();
+    for (Passenger passenger : passengersAtStation) {
+      passenger.boardIfPossible(this);
+    }
     prevStation = currStation;
     currStation = null;
   }
 
   public void stop() {
     currStation = nextStation;
+    for (Passenger passenger : passengers) {
+      passenger.arriveAt(currStation);
+    }
     nextStation = line.getNextStation(prevStation, currStation);
   }
 }
