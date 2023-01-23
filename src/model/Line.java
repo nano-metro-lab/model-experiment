@@ -19,9 +19,9 @@ public class Line {
 
     public StationNode getNext(StationNode prev) {
       if (prev == left) {
-        return right;
+        return Optional.ofNullable(right).orElse(left);
       } else if (prev == right) {
-        return left;
+        return Optional.ofNullable(left).orElse(right);
       }
       throw new RuntimeException("stationNode is not connected to this node");
     }
@@ -38,7 +38,7 @@ public class Line {
   }
 
   public Station getNextStation(Station prevStation, Station currStation) {
-    StationNode prevNode = getNode(prevStation);
+    StationNode prevNode = Optional.ofNullable(prevStation).map(this::getNode).orElse(null);
     StationNode currNode = getNode(currStation);
     StationNode nextNode = currNode.getNext(prevNode);
     return nextNode.station;
