@@ -72,23 +72,23 @@ public class Line {
   }
 
   private Optional<Route> findRoute(Station station, StationType destination, UnaryOperator<StationNode> getAdjacentNode) {
-    final StationNode adjacentNode = getAdjacentNode.apply(getNode(station));
-    if (adjacentNode == null) {
+    final StationNode routeStartNode = getAdjacentNode.apply(getNode(station));
+    if (routeStartNode == null) {
       return Optional.empty();
     }
     int distance = 1;
-    StationNode node = adjacentNode;
+    StationNode node = routeStartNode;
     while (node != null) {
       if (node.station.getType() == destination) {
-        Route route = new Route(adjacentNode.station, node.station, 0, distance);
+        Route route = new Route(routeStartNode.station, node.station, 0, 0, distance);
         return Optional.of(route);
       }
       distance += 1;
       node = getAdjacentNode.apply(node);
     }
-    List<Route> possibleRoutes = new ArrayList<>();
+    List<Route> availableRoutes = new ArrayList<>();
     distance = 1;
-    node = adjacentNode;
+    node = routeStartNode;
     while (node != null) {
       for (Line line : node.station.getLines()) {
         if (line == this) {
@@ -99,15 +99,15 @@ public class Line {
         if (transferRoutes.isEmpty()) {
           continue;
         }
-        int averageTransferTime = Route.getAverageTransferTime(transferRoutes);
-        int averageLength = Route.getAverageLength(transferRoutes);
-        Route route = new Route(adjacentNode.station, node.station, 1 + averageTransferTime, distance + averageLength);
-        possibleRoutes.add(route);
+        int transferTimes = 1 + Route.average(transferRoutes, Route::transferTimes);
+        int transferLength = Route.average(transferRoutes, Route::totalLength);
+        Route route = new Route(routeStartNode.station, node.station, transferTimes, transferLength, distance + transferLength);
+        availableRoutes.add(route);
       }
       distance += 1;
       node = getAdjacentNode.apply(node);
     }
-    return possibleRoutes.stream().sorted().findFirst();
+    return availableRoutes.stream().sorted().findFirst();
   }
 
   private StationNode getNode(Station station) {
