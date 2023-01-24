@@ -18,14 +18,14 @@ public class RoutesMap {
   }
 
   public List<Route> get(StationType destination) {
-    if (!map.containsKey(destination)) {
-      // prevent infinite loop
-      map.put(destination, List.of());
-      List<Route> routes = getRoutes(destination);
-      map.put(destination, routes);
-      return routes;
+    if (map.containsKey(destination)) {
+      return map.get(destination);
     }
-    return map.get(destination);
+    // prevent infinite loop
+    map.put(destination, List.of());
+    List<Route> routes = getRoutes(destination);
+    map.put(destination, routes);
+    return routes;
   }
 
   private List<Route> getRoutes(StationType destination) {
