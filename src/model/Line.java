@@ -126,7 +126,7 @@ public class Line {
       distance += 1;
       node = getAdjacentNode.apply(node);
     }
-    return availableRoutes.stream().sorted().findFirst();
+    return availableRoutes.stream().min(Route.comparator);
   }
 
   private StationNode getNode(Station station) {
