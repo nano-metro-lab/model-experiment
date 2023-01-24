@@ -9,9 +9,17 @@ public class Main {
 
     new Passenger(stationCircle, StationType.TRIANGLE);
 
-    Line lineCircleToSquare = new Line(stationCircle, stationSquare);
-    Line lineSquareToTriangle1 = new Line(stationSquare, stationTriangle1);
-    Line lineSquareToTriangle2 = new Line(stationSquare, stationTriangle2);
+    Line lineCircleToSquare = new Line();
+    lineCircleToSquare.addStartStation(stationCircle);
+    lineCircleToSquare.addEndStation(stationSquare);
+
+    Line lineSquareToTriangle1 = new Line();
+    lineSquareToTriangle1.addStartStation(stationSquare);
+    lineSquareToTriangle1.addEndStation(stationTriangle1);
+
+    Line lineSquareToTriangle2 = new Line();
+    lineSquareToTriangle2.addStartStation(stationSquare);
+    lineSquareToTriangle2.addEndStation(stationTriangle2);
 
     Train trainCircleToSquare = new Train(lineCircleToSquare, stationCircle);
     Train trainSquareToTriangle1 = new Train(lineSquareToTriangle1, stationSquare);
