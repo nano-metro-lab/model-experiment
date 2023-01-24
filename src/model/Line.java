@@ -32,9 +32,9 @@ public class Line {
 
   private StationNode getNextNode(StationNode currNode, StationNode prevNode) {
     if (prevNode == currNode.left) {
-      return currNode.right == tail ? currNode.left : currNode.right;
+      return currNode.right == tail ? prevNode : currNode.right;
     } else if (prevNode == currNode.right) {
-      return currNode.left == head ? currNode.right : currNode.left;
+      return currNode.left == head ? prevNode : currNode.left;
     } else {
       throw new IllegalArgumentException("prevNode is not connected to currNode");
     }
@@ -50,7 +50,7 @@ public class Line {
 
   public void addStation(Station station, List<Station> adjacentStations) {
     if (adjacentStations.size() != 2) {
-      throw new IllegalArgumentException("adjacentStations should contain two stations");
+      throw new IllegalArgumentException("adjacentStations should contain 2 stations");
     }
     StationNode[] adjacentNodes = adjacentStations.stream().map(this::getNode).toArray(StationNode[]::new);
     addStation(station, adjacentNodes);
