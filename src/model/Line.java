@@ -23,7 +23,7 @@ public class Line {
       } else if (currNode.right == tail) {
         return tail;
       } else {
-        throw new RuntimeException("prevStation is null and currStation is not at the start or end of this line");
+        throw new IllegalArgumentException("prevStation is null and currStation is not at the start or end of this line");
       }
     });
     StationNode nextNode = getNextNode(currNode, prevNode);
@@ -36,7 +36,7 @@ public class Line {
     } else if (prevNode == currNode.right) {
       return currNode.left == head ? currNode.right : currNode.left;
     } else {
-      throw new RuntimeException("prevNode is not connected to currNode");
+      throw new IllegalArgumentException("prevNode is not connected to currNode");
     }
   }
 
@@ -50,7 +50,7 @@ public class Line {
 
   public void addStation(Station station, List<Station> adjacentStations) {
     if (adjacentStations.size() != 2) {
-      throw new AssertionError("adjacentStations should contain two stations");
+      throw new IllegalArgumentException("adjacentStations should contain two stations");
     }
     StationNode[] adjacentNodes = adjacentStations.stream().map(this::getNode).toArray(StationNode[]::new);
     addStation(station, adjacentNodes);
@@ -66,7 +66,7 @@ public class Line {
       leftNode = adjacentNodes[1];
       rightNode = adjacentNodes[0];
     } else {
-      throw new RuntimeException("adjacentStations are not connected on this line");
+      throw new IllegalArgumentException("adjacentStations are not connected on this line");
     }
     StationNode node = new StationNode(station, leftNode, rightNode);
     leftNode.right = node;
@@ -129,7 +129,7 @@ public class Line {
       }
       node = node.right;
     }
-    throw new RuntimeException("station is not on this line");
+    throw new IllegalArgumentException("station is not on this line");
   }
 
   private static class StationNode {
