@@ -26,7 +26,6 @@ public class Passenger {
     if (route == null) {
       return;
     }
-    assert destinations.isEmpty();
     destinations.push(finalDestination);
     StationType routeDestination = route.end().getType();
     if (routeDestination != finalDestination) {
@@ -50,7 +49,7 @@ public class Passenger {
   }
 
   public void arriveAt(Station station) {
-    if (station.getType() != destinations.getLast()) {
+    if (station.getType() != destinations.peek()) {
       return;
     }
     currentTrain.removePassenger(this);
