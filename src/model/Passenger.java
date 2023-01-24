@@ -22,15 +22,15 @@ public class Passenger {
   }
 
   public void boardIfPossible(Train train) {
-    Optional<Route> possibleRoute = findRoute(train);
-    if (possibleRoute.isEmpty()) {
+    Route route = findRoute(train).orElse(null);
+    if (route == null) {
       return;
     }
     assert destinations.isEmpty();
     destinations.push(finalDestination);
-    Station routeEndStation = possibleRoute.get().end();
-    if (routeEndStation.getType() != finalDestination) {
-      destinations.push(routeEndStation.getType());
+    StationType routeDestination = route.end().getType();
+    if (routeDestination != finalDestination) {
+      destinations.push(routeDestination);
     }
     currentStation.removePassenger(this);
     currentStation = null;
