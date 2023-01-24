@@ -8,6 +8,7 @@ import java.util.function.UnaryOperator;
 public class Line {
   private final StationNode head;
   private final StationNode tail;
+  private int length = 0;
 
   public Line() {
     head = StationNode.newSentinel(null, null);
@@ -31,6 +32,7 @@ public class Line {
   }
 
   private StationNode getNextNode(StationNode currNode, StationNode prevNode) {
+    checkLength();
     if (prevNode == currNode.left) {
       return currNode.right == tail ? prevNode : currNode.right;
     } else if (prevNode == currNode.right) {
@@ -71,6 +73,7 @@ public class Line {
     StationNode node = new StationNode(station, leftNode, rightNode);
     leftNode.right = node;
     rightNode.left = node;
+    length += 1;
     station.addLine(this);
   }
 
@@ -83,6 +86,7 @@ public class Line {
   }
 
   private Optional<Route> findRoute(Station station, StationType destination, UnaryOperator<StationNode> getAdjacentNode) {
+    checkLength();
     final StationNode routeStartNode = getAdjacentNode.apply(getNode(station));
     if (routeStartNode.isSentinel()) {
       return Optional.empty();
@@ -130,6 +134,12 @@ public class Line {
       node = node.right;
     }
     throw new IllegalArgumentException("station is not on this line");
+  }
+
+  private void checkLength() {
+    if (length < 2) {
+      throw new RuntimeException("length of this line should be greater than or equal to 2");
+    }
   }
 
   private static class StationNode {
