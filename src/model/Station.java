@@ -21,23 +21,23 @@ public class Station {
     return passengers.toArray(Passenger[]::new);
   }
 
-  public void addPassenger(Passenger passenger) {
+  void addPassenger(Passenger passenger) {
     passengers.add(passenger);
   }
 
-  public void removePassenger(Passenger passenger) {
+  void removePassenger(Passenger passenger) {
     passengers.remove(passenger);
   }
 
-  public Line[] getLines() {
+  Line[] getLines() {
     return lines.toArray(Line[]::new);
   }
 
-  public void addLine(Line line) {
+  void addLine(Line line) {
     lines.add(line);
   }
 
-  public RoutesMap getRoutesMap() {
+  RoutesMap getRoutesMap() {
     return routesMap;
   }
 }

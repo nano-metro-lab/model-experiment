@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 record Route(Station start, Station end, int transferTimes, int transferLength, int totalLength) implements Comparable<Route> {
 
-  public static int average(Collection<Route> routes, Function<Route, Integer> mapper) {
+  static int average(Collection<Route> routes, Function<Route, Integer> mapper) {
     double average = (double) routes.stream().map(mapper).reduce(0, Integer::sum) / routes.size();
     return (int) Math.round(average);
   }

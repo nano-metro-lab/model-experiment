@@ -9,7 +9,7 @@ class RoutesMap {
   private final Station station;
   private final Map<StationType, List<Route>> map = new HashMap<>();
 
-  public RoutesMap(Station station) {
+  RoutesMap(Station station) {
     this.station = station;
   }
 
@@ -17,7 +17,7 @@ class RoutesMap {
     map.clear();
   }
 
-  public List<Route> get(StationType destination) {
+  List<Route> get(StationType destination) {
     if (map.containsKey(destination)) {
       return map.get(destination);
     }

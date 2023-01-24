@@ -21,7 +21,7 @@ public class Passenger {
     return finalDestination;
   }
 
-  public void boardIfPossible(Train train) {
+  void boardIfPossible(Train train) {
     Route route = findRoute(train).orElse(null);
     if (route == null) {
       return;
@@ -48,7 +48,7 @@ public class Passenger {
     return Optional.empty();
   }
 
-  public void arriveAt(Station station) {
+  void arriveAt(Station station) {
     if (station.getType() != destinations.peek()) {
       return;
     }

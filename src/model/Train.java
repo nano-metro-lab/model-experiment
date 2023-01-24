@@ -25,15 +25,15 @@ public class Train {
     return passengers.toArray(Passenger[]::new);
   }
 
-  public void addPassenger(Passenger passenger) {
+  void addPassenger(Passenger passenger) {
     passengers.add(passenger);
   }
 
-  public void removePassenger(Passenger passenger) {
+  void removePassenger(Passenger passenger) {
     passengers.remove(passenger);
   }
 
-  public Station getNextStation() {
+  Station getNextStation() {
     return nextStation;
   }
 

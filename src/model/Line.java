@@ -16,7 +16,7 @@ public class Line {
     head.right = tail;
   }
 
-  public Station getNextStation(Station currStation, Station prevStation) {
+  Station getNextStation(Station currStation, Station prevStation) {
     StationNode currNode = getNode(currStation);
     StationNode prevNode = Optional.ofNullable(prevStation).map(this::getNode).orElseGet(() -> {
       if (currNode.left == head) {
@@ -77,11 +77,11 @@ public class Line {
     station.addLine(this);
   }
 
-  public Optional<Route> findRouteFromLeft(Station station, StationType destination) {
+  Optional<Route> findRouteFromLeft(Station station, StationType destination) {
     return findRoute(station, destination, node -> node.left);
   }
 
-  public Optional<Route> findRouteFromRight(Station station, StationType destination) {
+  Optional<Route> findRouteFromRight(Station station, StationType destination) {
     return findRoute(station, destination, node -> node.right);
   }
 
@@ -143,21 +143,22 @@ public class Line {
   }
 
   private static class StationNode {
-    public final Station station;
-    public StationNode left;
-    public StationNode right;
+    final Station station;
+    StationNode left;
+    StationNode right;
 
-    public StationNode(Station station, StationNode left, StationNode right) {
+    StationNode(Station station, StationNode left, StationNode right) {
       this.station = station;
       this.left = left;
       this.right = right;
     }
 
-    public static StationNode newSentinel(StationNode left, StationNode right) {
+    @SuppressWarnings("SameParameterValue")
+    static StationNode newSentinel(StationNode left, StationNode right) {
       return new StationNode(null, left, right);
     }
 
-    public boolean isSentinel() {
+    boolean isSentinel() {
       return station == null;
     }
   }
