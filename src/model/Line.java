@@ -1,7 +1,6 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
@@ -49,11 +48,11 @@ public class Line {
     addStation(station, new StationNode[]{tail.left, tail});
   }
 
-  public void addStation(Station station, Station[] adjacentStations) {
-    if (adjacentStations.length != 2) {
+  public void addStation(Station station, List<Station> adjacentStations) {
+    if (adjacentStations.size() != 2) {
       throw new AssertionError("adjacentStations should contain two stations");
     }
-    StationNode[] adjacentNodes = Arrays.stream(adjacentStations).map(this::getNode).toArray(StationNode[]::new);
+    StationNode[] adjacentNodes = adjacentStations.stream().map(this::getNode).toArray(StationNode[]::new);
     addStation(station, adjacentNodes);
   }
 
