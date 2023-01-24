@@ -7,26 +7,6 @@ import java.util.Optional;
 import java.util.function.UnaryOperator;
 
 public class Line {
-  private static class StationNode {
-    public final Station station;
-    public StationNode left;
-    public StationNode right;
-
-    public StationNode(Station station, StationNode left, StationNode right) {
-      this.station = station;
-      this.left = left;
-      this.right = right;
-    }
-
-    public static StationNode newSentinel(StationNode left, StationNode right) {
-      return new StationNode(null, left, right);
-    }
-
-    public boolean isSentinel() {
-      return station == null;
-    }
-  }
-
   private final StationNode head;
   private final StationNode tail;
 
@@ -151,5 +131,25 @@ public class Line {
       node = node.right;
     }
     throw new RuntimeException("station is not on this line");
+  }
+
+  private static class StationNode {
+    public final Station station;
+    public StationNode left;
+    public StationNode right;
+
+    public StationNode(Station station, StationNode left, StationNode right) {
+      this.station = station;
+      this.left = left;
+      this.right = right;
+    }
+
+    public static StationNode newSentinel(StationNode left, StationNode right) {
+      return new StationNode(null, left, right);
+    }
+
+    public boolean isSentinel() {
+      return station == null;
+    }
   }
 }
