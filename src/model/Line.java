@@ -16,6 +16,10 @@ public class Line {
     head.right = tail;
   }
 
+  public void destroy() {
+    throw new RuntimeException("not implemented");
+  }
+
   Station getNextStation(Station currStation, Station prevStation) {
     StationNode currNode = getNode(currStation);
     StationNode prevNode = Optional.ofNullable(prevStation).map(this::getNode).orElseGet(() -> {
