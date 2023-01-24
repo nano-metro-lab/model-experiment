@@ -13,10 +13,6 @@ class RoutesMap {
     this.station = station;
   }
 
-  public void clear() {
-    map.clear();
-  }
-
   List<Route> get(StationType destination) {
     if (map.containsKey(destination)) {
       return map.get(destination);
@@ -35,5 +31,9 @@ class RoutesMap {
       line.findRouteFromRight(station, destination).ifPresent(routes::add);
     }
     return List.copyOf(routes);
+  }
+
+  void clear() {
+    map.clear();
   }
 }

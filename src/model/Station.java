@@ -44,4 +44,8 @@ public class Station {
   RoutesMap getRoutesMap() {
     return routesMap;
   }
+
+  public void clearRoutesMap() {
+    routesMap.clear();
+  }
 }
