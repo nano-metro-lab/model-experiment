@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RoutesMap {
+class RoutesMap {
   private final Station station;
   private final Map<StationType, List<Route>> map = new HashMap<>();
 
