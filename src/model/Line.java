@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
@@ -67,26 +68,24 @@ public class Line {
     return findRoute(station, destination, StationNode::getRight);
   }
 
-  private Optional<Route> findRoute(Station station, StationType destination, UnaryOperator<StationNode> getAdjacentNode) {
+  private Optional<Route> findRoute(Station station, StationType destination, UnaryOperator<StationNode> successor) {
     checkValidation();
-    final StationNode routeStartNode = getAdjacentNode.apply(getNode(station));
+    final StationNode routeStartNode = successor.apply(getNode(station));
     if (routeStartNode.isSentinel()) {
       return Optional.empty();
     }
-    int distance = 1;
-    StationNode node = routeStartNode;
-    while (!node.isSentinel()) {
+    StationNodeIterator nodeIterator = new StationNodeIterator(routeStartNode, successor);
+    for (int distance = 1; nodeIterator.hasNext(); distance++) {
+      StationNode node = nodeIterator.next();
       if (node.station.getType() == destination) {
         Route route = new Route(routeStartNode.station, node.station, 0, 0, distance);
         return Optional.of(route);
       }
-      distance += 1;
-      node = getAdjacentNode.apply(node);
     }
     List<Route> availableRoutes = new ArrayList<>();
-    distance = 1;
-    node = routeStartNode;
-    while (!node.isSentinel()) {
+    nodeIterator.reset(routeStartNode);
+    for (int distance = 1; nodeIterator.hasNext(); distance++) {
+      StationNode node = nodeIterator.next();
       for (Line line : node.station.getLines()) {
         if (line == this) {
           continue;
@@ -100,8 +99,6 @@ public class Line {
         Route route = new Route(routeStartNode.station, node.station, transferTimes, transferLength, distance + transferLength);
         availableRoutes.add(route);
       }
-      distance += 1;
-      node = getAdjacentNode.apply(node);
     }
     return availableRoutes.stream().min(Route.comparator);
   }
@@ -155,6 +152,32 @@ public class Line {
 
     StationNode getRight() {
       return right;
+    }
+  }
+
+  private static class StationNodeIterator implements Iterator<StationNode> {
+    private final UnaryOperator<StationNode> successor;
+    private StationNode current;
+
+    StationNodeIterator(StationNode node, UnaryOperator<StationNode> successor) {
+      this.successor = successor;
+      reset(node);
+    }
+
+    void reset(StationNode node) {
+      current = node;
+    }
+
+    @Override
+    public boolean hasNext() {
+      return !current.isSentinel();
+    }
+
+    @Override
+    public StationNode next() {
+      StationNode node = current;
+      current = successor.apply(current);
+      return node;
     }
   }
 }
