@@ -8,13 +8,13 @@ import java.util.Optional;
 public class Passenger {
   private final StationType finalDestination;
   private final Deque<StationType> destinations = new ArrayDeque<>();
-  private Station currentStation;
-  private Train currentTrain;
+  private Station currStation;
+  private Train currTrain;
 
-  public Passenger(Station station, StationType destination) {
-    currentStation = station;
-    currentStation.addPassenger(this);
-    finalDestination = destination;
+  public Passenger(Station currStation, StationType finalDestination) {
+    currStation.addPassenger(this);
+    this.currStation = currStation;
+    this.finalDestination = finalDestination;
   }
 
   public StationType getFinalDestination() {
@@ -31,14 +31,14 @@ public class Passenger {
     if (routeDestination != finalDestination) {
       destinations.push(routeDestination);
     }
-    currentStation.removePassenger(this);
-    currentStation = null;
-    currentTrain = train;
-    currentTrain.addPassenger(this);
+    currStation.removePassenger(this);
+    currStation = null;
+    currTrain = train;
+    currTrain.addPassenger(this);
   }
 
   private Optional<Route> findRoute(Train train) {
-    RoutesMap routesMap = currentStation.getRoutesMap();
+    RoutesMap routesMap = currStation.getRoutesMap();
     List<Route> routes = routesMap.get(finalDestination);
     for (Route route : routes) {
       if (route.start() == train.getNextStation()) {
@@ -52,12 +52,12 @@ public class Passenger {
     if (station.getType() != destinations.peek()) {
       return;
     }
-    currentTrain.removePassenger(this);
-    currentTrain = null;
-    currentStation = station;
+    currTrain.removePassenger(this);
+    currTrain = null;
+    currStation = station;
     destinations.pop();
     if (!destinations.isEmpty()) {
-      currentStation.addPassenger(this);
+      currStation.addPassenger(this);
       destinations.clear();
     }
   }

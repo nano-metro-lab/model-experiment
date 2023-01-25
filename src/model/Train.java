@@ -14,11 +14,11 @@ public class Train {
     this(line, station, null);
   }
 
-  public Train(Line line, Station station, Station prevStation) {
-    this.line = line;
+  public Train(Line line, Station currStation, Station prevStation) {
     line.addTrain(this);
+    this.line = line;
     this.prevStation = prevStation;
-    currStation = station;
+    this.currStation = currStation;
     nextStation = line.getNextStation(currStation, prevStation);
   }
 
