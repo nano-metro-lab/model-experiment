@@ -60,11 +60,11 @@ public class Line {
   }
 
   Optional<Route> findRouteFromLeft(Station station, StationType destination) {
-    return findRoute(station, destination, node -> node.left);
+    return findRoute(station, destination, StationNode::getLeft);
   }
 
   Optional<Route> findRouteFromRight(Station station, StationType destination) {
-    return findRoute(station, destination, node -> node.right);
+    return findRoute(station, destination, StationNode::getRight);
   }
 
   private Optional<Route> findRoute(Station station, StationType destination, UnaryOperator<StationNode> getAdjacentNode) {
@@ -147,6 +147,14 @@ public class Line {
 
     boolean isSentinel() {
       return station == null;
+    }
+
+    StationNode getLeft() {
+      return left;
+    }
+
+    StationNode getRight() {
+      return right;
     }
   }
 }
