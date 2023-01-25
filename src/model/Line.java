@@ -8,7 +8,7 @@ import java.util.function.UnaryOperator;
 public class Line {
   private final StationNode head;
   private final StationNode tail;
-  private List<Train> trains = new ArrayList<>();
+  private final List<Train> trains = new ArrayList<>();
 
   public Line() {
     head = StationNode.newSentinel(null, null);
