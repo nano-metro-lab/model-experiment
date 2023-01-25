@@ -23,7 +23,7 @@ public class Line {
       } else if (currNode.right == tail) {
         return tail;
       } else {
-        throw new IllegalArgumentException("prevStation is null and currStation is not at the start or end of this line");
+        throw new IllegalArgumentException("prevStation is null and currStation is not at the end of this line");
       }
     });
     StationNode nextNode = getNextNode(currNode, prevNode);
@@ -41,12 +41,22 @@ public class Line {
     }
   }
 
-  public void addStartStation(Station station) {
-    addStation(station, new StationNode[]{head, head.right});
+  public void addStation(Station station) {
+    if (head.right != tail) {
+      throw new RuntimeException("adjacent station is required");
+    }
+    addStation(station, new StationNode[]{head, tail});
   }
 
-  public void addEndStation(Station station) {
-    addStation(station, new StationNode[]{tail.left, tail});
+  public void addStation(Station station, Station endStation) {
+    StationNode endNode = getNode(endStation);
+    if (endNode.left == head) {
+      addStation(station, new StationNode[]{head, endNode});
+    } else if (endNode.right == tail) {
+      addStation(station, new StationNode[]{endNode, tail});
+    } else {
+      throw new IllegalArgumentException("endStation is not at the end of this line");
+    }
   }
 
   public void addStation(Station station, List<Station> adjacentStations) {
