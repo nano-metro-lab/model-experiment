@@ -63,7 +63,7 @@ public class Station {
 
     private List<Route> find(StationType destination) {
       List<Route> routes = new ArrayList<>();
-      for (Line line : Station.this.lines) {
+      for (Line line : Station.this.getLines()) {
         line.findRouteFromLeft(Station.this, destination).ifPresent(routes::add);
         line.findRouteFromRight(Station.this, destination).ifPresent(routes::add);
       }
