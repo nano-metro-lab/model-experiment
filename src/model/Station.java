@@ -39,10 +39,6 @@ public class Station {
     lines.add(line);
   }
 
-  void removeLine(Line line) {
-    lines.remove(line);
-  }
-
   List<Route> getRoutes(StationType destination) {
     return routesMap.get(destination);
   }

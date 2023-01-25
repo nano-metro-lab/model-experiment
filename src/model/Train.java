@@ -15,7 +15,6 @@ public class Train {
   }
 
   public Train(Line line, Station currStation, Station prevStation) {
-    line.addTrain(this);
     this.line = line;
     this.prevStation = prevStation;
     this.currStation = currStation;
@@ -52,9 +51,5 @@ public class Train {
       passenger.arriveAt(currStation);
     }
     nextStation = line.getNextStation(currStation, prevStation);
-  }
-
-  public void destroy() {
-    throw new RuntimeException("not implemented");
   }
 }
