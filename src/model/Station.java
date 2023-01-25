@@ -7,7 +7,6 @@ import java.util.Map;
 
 public class Station {
   private final StationType type;
-  private final List<Passenger> passengers = new ArrayList<>();
   private final List<Line> lines = new ArrayList<>();
   private final RoutesMap routesMap = new RoutesMap();
 
@@ -19,24 +18,16 @@ public class Station {
     return type;
   }
 
-  public Passenger[] getPassengers() {
-    return passengers.toArray(Passenger[]::new);
-  }
-
-  void addPassenger(Passenger passenger) {
-    passengers.add(passenger);
-  }
-
-  void removePassenger(Passenger passenger) {
-    passengers.remove(passenger);
-  }
-
   Line[] getLines() {
     return lines.toArray(Line[]::new);
   }
 
-  void addLine(Line line) {
+  public void addLine(Line line) {
     lines.add(line);
+  }
+
+  public void removeLine(Line line) {
+    lines.remove(line);
   }
 
   List<Route> getRoutes(StationType destination) {

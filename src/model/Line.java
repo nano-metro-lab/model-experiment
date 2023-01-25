@@ -15,32 +15,6 @@ public class Line {
     head.right = tail;
   }
 
-  Station getNextStation(Station currStation, Station prevStation) {
-    StationNode currNode = getNode(currStation);
-    StationNode prevNode = Optional.ofNullable(prevStation).map(this::getNode).orElseGet(() -> {
-      if (currNode.left == head) {
-        return head;
-      } else if (currNode.right == tail) {
-        return tail;
-      } else {
-        throw new IllegalArgumentException("prevStation is null and currStation is not at the end of this line");
-      }
-    });
-    StationNode nextNode = getNextNode(currNode, prevNode);
-    return nextNode.station;
-  }
-
-  private StationNode getNextNode(StationNode currNode, StationNode prevNode) {
-    checkValidation();
-    if (prevNode == currNode.left) {
-      return currNode.right == tail ? prevNode : currNode.right;
-    } else if (prevNode == currNode.right) {
-      return currNode.left == head ? prevNode : currNode.left;
-    } else {
-      throw new IllegalArgumentException("prevNode is not connected to currNode");
-    }
-  }
-
   public void addStation(Station station) {
     if (head.right != tail) {
       throw new RuntimeException("adjacent station is required");
