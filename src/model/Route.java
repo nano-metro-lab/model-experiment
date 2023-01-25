@@ -11,7 +11,7 @@ record Route(
   int transferLength,
   int totalLength
 ) {
-  static Comparator<Route> comparator =
+  static final Comparator<Route> comparator =
     Comparator
       .comparingInt(Route::transferTimes)
       .thenComparingInt(Route::totalLength)
