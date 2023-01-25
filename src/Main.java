@@ -1,7 +1,6 @@
 import model.Line;
 import model.Passenger;
 import model.Station;
-import model.StationType;
 
 public class Main {
   public static void main(String[] args) {
@@ -23,5 +22,9 @@ public class Main {
     Line lineSquareToTriangle2 = new Line();
     lineSquareToTriangle2.addStation(stationSquare);
     lineSquareToTriangle2.addStation(stationTriangle2, stationSquare);
+  }
+
+  private enum StationType implements model.StationType {
+    CIRCLE, SQUARE, TRIANGLE
   }
 }

@@ -1,5 +1,4 @@
 package model;
 
-public enum StationType {
-  CIRCLE, TRIANGLE, SQUARE
+public interface StationType {
 }
