@@ -8,15 +8,12 @@ import java.util.function.UnaryOperator;
 public class Line {
   private final StationNode head;
   private final StationNode tail;
+  private List<Train> trains = new ArrayList<>();
 
   public Line() {
     head = StationNode.newSentinel(null, null);
     tail = StationNode.newSentinel(head, null);
     head.right = tail;
-  }
-
-  public void destroy() {
-    throw new RuntimeException("not implemented");
   }
 
   Station getNextStation(Station currStation, Station prevStation) {
@@ -77,6 +74,18 @@ public class Line {
     leftNode.right = node;
     rightNode.left = node;
     station.addLine(this);
+  }
+
+  void addTrain(Train train) {
+    trains.add(train);
+  }
+
+  void removeTrain(Train train) {
+    trains.remove(train);
+  }
+
+  public void destroy() {
+    throw new RuntimeException("not implemented");
   }
 
   Optional<Route> findRouteFromLeft(Station station, StationType destination) {
