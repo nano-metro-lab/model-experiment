@@ -38,8 +38,7 @@ public class Passenger {
   }
 
   private Optional<Route> findRoute(Train train) {
-    RoutesMap routesMap = currStation.getRoutesMap();
-    List<Route> routes = routesMap.get(finalDestination);
+    List<Route> routes = currStation.getRoutes(finalDestination);
     for (Route route : routes) {
       if (route.start() == train.getNextStation()) {
         return Optional.of(route);

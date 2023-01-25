@@ -120,8 +120,7 @@ public class Line {
         if (line == this) {
           continue;
         }
-        RoutesMap transferRoutesMap = node.station.getRoutesMap();
-        List<Route> transferRoutes = transferRoutesMap.get(destination);
+        List<Route> transferRoutes = node.station.getRoutes(destination);
         if (transferRoutes.isEmpty()) {
           continue;
         }
