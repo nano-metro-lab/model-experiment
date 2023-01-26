@@ -40,15 +40,15 @@ public class Line {
     firstNode.left = null;
   }
 
-  Optional<Route> findRouteFromLeft(StationType destination, Station station) {
-    return findRoute(destination, station, StationNode::getLeft);
+  Optional<Route> findRouteFromLeft(StationType destinationType, Station station) {
+    return findRoute(destinationType, station, StationNode::getLeft);
   }
 
-  Optional<Route> findRouteFromRight(StationType destination, Station station) {
-    return findRoute(destination, station, StationNode::getRight);
+  Optional<Route> findRouteFromRight(StationType destinationType, Station station) {
+    return findRoute(destinationType, station, StationNode::getRight);
   }
 
-  private Optional<Route> findRoute(StationType destination, Station station, UnaryOperator<StationNode> successor) {
+  private Optional<Route> findRoute(StationType destinationType, Station station, UnaryOperator<StationNode> successor) {
     StationNode routeStartNode = successor.apply(getNode(station));
     if (routeStartNode == null) {
       return Optional.empty();
@@ -56,7 +56,7 @@ public class Line {
     StationNodeIterator nodeIterator = new StationNodeIterator(routeStartNode, successor);
     for (int distance = 1; nodeIterator.hasNext(); distance++) {
       StationNode node = nodeIterator.next();
-      if (node.station.getType().equals(destination)) {
+      if (node.station.getType().equals(destinationType)) {
         Route route = new Route(routeStartNode.station, node.station, 0, 0, distance);
         return Optional.of(route);
       }
@@ -69,7 +69,7 @@ public class Line {
         if (line == this) {
           continue;
         }
-        List<Route> transferRoutes = node.station.getRoutes(destination);
+        List<Route> transferRoutes = node.station.getRoutes(destinationType);
         if (transferRoutes.isEmpty()) {
           continue;
         }

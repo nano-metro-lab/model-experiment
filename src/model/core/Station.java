@@ -30,8 +30,8 @@ public class Station {
     lines.remove(line);
   }
 
-  public List<Route> getRoutes(StationType destination) {
-    return routesMap.get(destination);
+  public List<Route> getRoutes(StationType destinationType) {
+    return routesMap.get(destinationType);
   }
 
   public void clearRoutesMap() {
@@ -41,22 +41,22 @@ public class Station {
   private class RoutesMap {
     private final Map<StationType, List<Route>> map = new HashMap<>();
 
-    List<Route> get(StationType destination) {
-      if (map.containsKey(destination)) {
-        return map.get(destination);
+    List<Route> get(StationType destinationType) {
+      if (map.containsKey(destinationType)) {
+        return map.get(destinationType);
       }
       // prevent infinite loop
-      map.put(destination, List.of());
-      List<Route> routes = find(destination);
-      map.put(destination, routes);
+      map.put(destinationType, List.of());
+      List<Route> routes = find(destinationType);
+      map.put(destinationType, routes);
       return routes;
     }
 
-    private List<Route> find(StationType destination) {
+    private List<Route> find(StationType destinationType) {
       List<Route> routes = new ArrayList<>();
       for (Line line : Station.this.getLines()) {
-        line.findRouteFromLeft(destination, Station.this).ifPresent(routes::add);
-        line.findRouteFromRight(destination, Station.this).ifPresent(routes::add);
+        line.findRouteFromLeft(destinationType, Station.this).ifPresent(routes::add);
+        line.findRouteFromRight(destinationType, Station.this).ifPresent(routes::add);
       }
       return List.copyOf(routes);
     }

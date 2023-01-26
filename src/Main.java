@@ -29,8 +29,8 @@ public class Main {
     modelService.addLine(lineSquare2ToTriangle2);
     modelService.updateLine(lineSquare2ToTriangle2, List.of(stationSquare2, stationTriangle2));
 
-    GraphicalStation destinationStation = modelService.findDestination(StationType.TRIANGLE, stationCircle, stationSquare1).orElseThrow();
-    assert destinationStation == stationSquare2;
+    GraphicalStation destination = modelService.findDestination(StationType.TRIANGLE, stationCircle, stationSquare1).orElseThrow();
+    assert destination == stationSquare2;
   }
 
   private enum StationType implements model.core.StationType {
