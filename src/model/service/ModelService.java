@@ -12,11 +12,5 @@ public interface ModelService<StationId, LineId> {
 
   void updateLine(LineId id, List<StationId> stationIds);
 
-  Optional<Route<StationId>> findRoute(StationType destination, StationId stationId, StationId nextStationId);
-
-  interface Route<TStationId> {
-    TStationId start();
-
-    TStationId end();
-  }
+  Optional<StationId> findDestination(StationType destinationType, StationId stationId, StationId nextStationId);
 }

@@ -1,6 +1,7 @@
 package model.service;
 
 import model.core.Line;
+import model.core.Route;
 import model.core.Station;
 import model.core.StationType;
 
@@ -52,13 +53,13 @@ public class ModelServiceProvider<StationId, LineId> implements ModelService<Sta
   }
 
   @Override
-  public Optional<ModelService.Route<StationId>> findRoute(StationType destination, StationId stationId, StationId nextStationId) {
+  public Optional<StationId> findDestination(StationType destinationType, StationId stationId, StationId nextStationId) {
     Station station = getStation(stationId);
     Station nextStation = getStation(nextStationId);
-    for (var route : station.getRoutes(destination)) {
+    for (Route route : station.getRoutes(destinationType)) {
       if (route.start() == nextStation) {
         StationId endStationId = getKey(stationMap, route.end());
-        return Optional.of(new Route<>(nextStationId, endStationId));
+        return Optional.of(endStationId);
       }
     }
     return Optional.empty();
@@ -70,11 +71,5 @@ public class ModelServiceProvider<StationId, LineId> implements ModelService<Sta
 
   private Station getStation(StationId id) {
     return get(stationMap, id);
-  }
-
-  private record Route<TStationId>(
-    TStationId start,
-    TStationId end
-  ) implements ModelService.Route<TStationId> {
   }
 }
