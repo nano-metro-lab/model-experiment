@@ -51,6 +51,12 @@ public class ModelServiceProvider<StationId, LineId> implements ModelService<Sta
     stationMap.values().forEach(Station::clearRoutesMap);
   }
 
+  @Override
+  public void reset() {
+    stationMap.clear();
+    lineMap.clear();
+  }
+
   private Line getLine(LineId id) {
     return ModelServiceUtils.getValue(lineMap, id);
   }

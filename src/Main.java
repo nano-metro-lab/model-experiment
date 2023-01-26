@@ -31,6 +31,8 @@ public class Main {
 
     GraphicalStation destination = modelService.findDestination(StationType.TRIANGLE, stationCircle, stationSquare1).orElseThrow();
     assert destination == stationSquare2;
+
+    modelService.reset();
   }
 
   private enum StationType implements model.core.StationType {
