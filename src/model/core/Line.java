@@ -43,15 +43,15 @@ public class Line {
     nodeMap.clear();
   }
 
-  Optional<Route> findRouteFromLeft(Station station, StationType destination) {
-    return findRoute(station, destination, StationNode::getLeft);
+  Optional<Route> findRouteFromLeft(StationType destination, Station station) {
+    return findRoute(destination, station, StationNode::getLeft);
   }
 
-  Optional<Route> findRouteFromRight(Station station, StationType destination) {
-    return findRoute(station, destination, StationNode::getRight);
+  Optional<Route> findRouteFromRight(StationType destination, Station station) {
+    return findRoute(destination, station, StationNode::getRight);
   }
 
-  private Optional<Route> findRoute(Station station, StationType destination, UnaryOperator<StationNode> successor) {
+  private Optional<Route> findRoute(StationType destination, Station station, UnaryOperator<StationNode> successor) {
     StationNode routeStartNode = successor.apply(getNode(station));
     if (routeStartNode == null) {
       return Optional.empty();
