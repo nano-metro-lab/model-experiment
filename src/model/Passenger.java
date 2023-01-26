@@ -15,7 +15,7 @@ public class Passenger {
     return finalDestination;
   }
 
-  public StationType getCurrDestination() {
+  public StationType getCurrentDestination() {
     return Optional.ofNullable(transfer).orElse(finalDestination);
   }
 
