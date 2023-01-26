@@ -7,8 +7,12 @@ public class Line {
   private final Map<Station, StationNode> nodeMap = new HashMap<>();
 
   public void update(List<Station> stations) {
-    if (stations.size() < 2) {
-      throw new IllegalArgumentException("stations should be greater than or equal to 2");
+    if (stations.isEmpty()) {
+      for (Station station : nodeMap.keySet()) {
+        station.removeLine(this);
+      }
+      nodeMap.clear();
+      return;
     }
     if (!nodeMap.isEmpty()) {
       Set<Station> staleStations = new HashSet<>(nodeMap.keySet());
@@ -34,13 +38,6 @@ public class Line {
     }
     StationNode firstNode = sentinel.right;
     firstNode.left = null;
-  }
-
-  public void reset() {
-    for (Station station : nodeMap.keySet()) {
-      station.removeLine(this);
-    }
-    nodeMap.clear();
   }
 
   Optional<Route> findRouteFromLeft(StationType destination, Station station) {
