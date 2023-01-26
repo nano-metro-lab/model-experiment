@@ -56,7 +56,7 @@ public class Line {
     StationNodeIterator nodeIterator = new StationNodeIterator(routeStartNode, successor);
     for (int distance = 1; nodeIterator.hasNext(); distance++) {
       StationNode node = nodeIterator.next();
-      if (node.station.getType() == destination) {
+      if (node.station.getType().equals(destination)) {
         Route route = new Route(routeStartNode.station, node.station, 0, 0, distance);
         return Optional.of(route);
       }
