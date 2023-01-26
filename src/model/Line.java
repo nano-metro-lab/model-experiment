@@ -1,14 +1,12 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.UnaryOperator;
 
 public class Line {
   private final StationNode head;
   private final StationNode tail;
+  private final Map<Station, StationNode> nodeMap = new HashMap<>();
 
   public Line() {
     head = StationNode.newSentinel(null, null);
@@ -57,6 +55,7 @@ public class Line {
     StationNode node = new StationNode(station, leftNode, rightNode);
     leftNode.right = node;
     rightNode.left = node;
+    nodeMap.put(station, node);
     station.addLine(this);
   }
 
@@ -104,26 +103,14 @@ public class Line {
   }
 
   private StationNode getNode(Station station) {
-    StationNode node = head.right;
-    while (node != tail) {
-      if (node.station == station) {
-        return node;
-      }
-      node = node.right;
-    }
-    throw new IllegalArgumentException("station is not on this line");
+    return Optional.ofNullable(nodeMap.get(station))
+      .orElseThrow(() -> new IllegalArgumentException("station is not on this line"));
   }
 
   private void checkValidation() {
-    int stationCount = 0;
-    StationNode node = head.right;
-    while (node != tail) {
-      if (++stationCount >= 2) {
-        return;
-      }
-      node = node.right;
+    if (nodeMap.size() < 2) {
+      throw new RuntimeException("number of stations on this line should be greater than or equal to 2");
     }
-    throw new RuntimeException("number of stations on this line should be greater than or equal to 2");
   }
 
   private static class StationNode {
