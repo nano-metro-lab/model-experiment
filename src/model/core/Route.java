@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.function.Function;
 
-record Route(
+public record Route(
   Station start,
   Station end,
   int transferTimes,

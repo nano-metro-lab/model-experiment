@@ -18,7 +18,7 @@ public class Station {
     return type;
   }
 
-  Line[] getLines() {
+  public Line[] getLines() {
     return lines.toArray(Line[]::new);
   }
 
@@ -30,7 +30,7 @@ public class Station {
     lines.remove(line);
   }
 
-  List<Route> getRoutes(StationType destination) {
+  public List<Route> getRoutes(StationType destination) {
     return routesMap.get(destination);
   }
 
