@@ -2,6 +2,8 @@ import model.Line;
 import model.Passenger;
 import model.Station;
 
+import java.util.List;
+
 public class Main {
   public static void main(String[] args) {
     Station stationCircle = new Station(StationType.CIRCLE);
@@ -12,16 +14,13 @@ public class Main {
     Passenger passengerTriangle = new Passenger(StationType.TRIANGLE);
 
     Line lineCircleToSquare = new Line();
-    lineCircleToSquare.addStation(stationCircle);
-    lineCircleToSquare.addStation(stationSquare, stationCircle);
+    lineCircleToSquare.update(List.of(stationCircle, stationSquare));
 
     Line lineSquareToTriangle1 = new Line();
-    lineSquareToTriangle1.addStation(stationSquare);
-    lineSquareToTriangle1.addStation(stationTriangle1, stationSquare);
+    lineSquareToTriangle1.update(List.of(stationSquare, stationTriangle1));
 
     Line lineSquareToTriangle2 = new Line();
-    lineSquareToTriangle2.addStation(stationSquare);
-    lineSquareToTriangle2.addStation(stationTriangle2, stationSquare);
+    lineSquareToTriangle2.update(List.of(stationSquare, stationTriangle2));
   }
 
   private enum StationType implements model.StationType {

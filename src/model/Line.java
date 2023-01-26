@@ -4,59 +4,36 @@ import java.util.*;
 import java.util.function.UnaryOperator;
 
 public class Line {
-  private final StationNode head;
-  private final StationNode tail;
   private final Map<Station, StationNode> nodeMap = new HashMap<>();
 
-  public Line() {
-    head = StationNode.newSentinel(null, null);
-    tail = StationNode.newSentinel(head, null);
-    head.right = tail;
-  }
-
-  public void addStation(Station station) {
-    if (head.right != tail) {
-      throw new RuntimeException("adjacent station is required");
+  public void update(List<Station> stations) {
+    if (stations.size() < 2) {
+      throw new IllegalArgumentException("stations should be greater than or equal to 2");
     }
-    addStation(station, new StationNode[]{head, tail});
-  }
-
-  public void addStation(Station station, Station endStation) {
-    StationNode endNode = getNode(endStation);
-    if (endNode.left == head) {
-      addStation(station, new StationNode[]{head, endNode});
-    } else if (endNode.right == tail) {
-      addStation(station, new StationNode[]{endNode, tail});
-    } else {
-      throw new IllegalArgumentException("endStation is not at the end of this line");
+    if (!nodeMap.isEmpty()) {
+      Set<Station> staleStations = new HashSet<>(nodeMap.keySet());
+      stations.forEach(staleStations::remove);
+      for (Station station : staleStations) {
+        nodeMap.remove(station);
+        station.removeLine(this);
+      }
     }
-  }
-
-  public void addStation(Station station, List<Station> adjacentStations) {
-    if (adjacentStations.size() != 2) {
-      throw new IllegalArgumentException("adjacentStations should contain 2 stations");
+    StationNode sentinel = new StationNode(null);
+    StationNode lastNode = sentinel;
+    for (Station station : stations) {
+      StationNode node = getPossibleNode(station).orElseGet(() -> {
+        StationNode newNode = new StationNode(station);
+        nodeMap.put(station, newNode);
+        station.addLine(this);
+        return newNode;
+      });
+      node.left = lastNode;
+      node.right = null;
+      lastNode.right = node;
+      lastNode = node;
     }
-    StationNode[] adjacentNodes = adjacentStations.stream().map(this::getNode).toArray(StationNode[]::new);
-    addStation(station, adjacentNodes);
-  }
-
-  private void addStation(Station station, StationNode[] adjacentNodes) {
-    StationNode leftNode;
-    StationNode rightNode;
-    if (adjacentNodes[0].right == adjacentNodes[1]) {
-      leftNode = adjacentNodes[0];
-      rightNode = adjacentNodes[1];
-    } else if (adjacentNodes[1].right == adjacentNodes[0]) {
-      leftNode = adjacentNodes[1];
-      rightNode = adjacentNodes[0];
-    } else {
-      throw new IllegalArgumentException("adjacentStations are not connected on this line");
-    }
-    StationNode node = new StationNode(station, leftNode, rightNode);
-    leftNode.right = node;
-    rightNode.left = node;
-    nodeMap.put(station, node);
-    station.addLine(this);
+    StationNode firstNode = sentinel.right;
+    firstNode.left = null;
   }
 
   Optional<Route> findRouteFromLeft(Station station, StationType destination) {
@@ -68,9 +45,8 @@ public class Line {
   }
 
   private Optional<Route> findRoute(Station station, StationType destination, UnaryOperator<StationNode> successor) {
-    checkValidation();
-    final StationNode routeStartNode = successor.apply(getNode(station));
-    if (routeStartNode.isSentinel()) {
+    StationNode routeStartNode = successor.apply(getNode(station));
+    if (routeStartNode == null) {
       return Optional.empty();
     }
     StationNodeIterator nodeIterator = new StationNodeIterator(routeStartNode, successor);
@@ -103,14 +79,12 @@ public class Line {
   }
 
   private StationNode getNode(Station station) {
-    return Optional.ofNullable(nodeMap.get(station))
+    return getPossibleNode(station)
       .orElseThrow(() -> new IllegalArgumentException("station is not on this line"));
   }
 
-  private void checkValidation() {
-    if (nodeMap.size() < 2) {
-      throw new RuntimeException("number of stations on this line should be greater than or equal to 2");
-    }
+  private Optional<StationNode> getPossibleNode(Station station) {
+    return Optional.ofNullable(nodeMap.get(station));
   }
 
   private static class StationNode {
@@ -118,19 +92,8 @@ public class Line {
     StationNode left;
     StationNode right;
 
-    StationNode(Station station, StationNode left, StationNode right) {
+    StationNode(Station station) {
       this.station = station;
-      this.left = left;
-      this.right = right;
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    static StationNode newSentinel(StationNode left, StationNode right) {
-      return new StationNode(null, left, right);
-    }
-
-    boolean isSentinel() {
-      return station == null;
     }
 
     StationNode getLeft() {
@@ -157,7 +120,7 @@ public class Line {
 
     @Override
     public boolean hasNext() {
-      return !current.isSentinel();
+      return current != null;
     }
 
     @Override
