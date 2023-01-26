@@ -84,7 +84,7 @@ public class Line {
 
   private StationNode getNode(Station station) {
     return findNode(station)
-      .orElseThrow(() -> new IllegalArgumentException("station is not on this line"));
+      .orElseThrow(() -> new RuntimeException("station is not on this line"));
   }
 
   private Optional<StationNode> findNode(Station station) {

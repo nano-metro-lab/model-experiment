@@ -16,7 +16,7 @@ public class ModelServiceProvider<StationId, LineId> implements ModelService<Sta
 
   private static <K, V> V get(Map<K, V> map, K key) {
     return Optional.ofNullable(map.get(key))
-      .orElseThrow(() -> new IllegalArgumentException("key " + key + " does not exist"));
+      .orElseThrow(() -> new RuntimeException("key " + key + " does not exist"));
   }
 
   private static <K, V> K getKey(Map<K, V> map, V value) {
@@ -25,13 +25,13 @@ public class ModelServiceProvider<StationId, LineId> implements ModelService<Sta
         return entry.getKey();
       }
     }
-    throw new IllegalArgumentException("value " + value + " does not exist");
+    throw new RuntimeException("value " + value + " does not exist");
   }
 
   @Override
   public void addStation(StationId id, StationType type) {
     if (stationMap.containsKey(id)) {
-      throw new IllegalArgumentException("station with id " + id + " already exists");
+      throw new RuntimeException("station with id " + id + " already exists");
     }
     stationMap.put(id, new Station(type));
   }
@@ -39,7 +39,7 @@ public class ModelServiceProvider<StationId, LineId> implements ModelService<Sta
   @Override
   public void addLine(LineId id) {
     if (lineMap.containsKey(id)) {
-      throw new IllegalArgumentException("line with id " + id + " already exists");
+      throw new RuntimeException("line with id " + id + " already exists");
     }
     lineMap.put(id, new Line());
   }
