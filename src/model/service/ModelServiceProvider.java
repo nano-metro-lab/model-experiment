@@ -14,20 +14,6 @@ public class ModelServiceProvider<StationId, LineId> implements ModelService<Sta
   private final Map<StationId, Station> stationMap = new HashMap<>();
   private final Map<LineId, Line> lineMap = new HashMap<>();
 
-  private static <K, V> V get(Map<K, V> map, K key) {
-    return Optional.ofNullable(map.get(key))
-      .orElseThrow(() -> new RuntimeException("key " + key + " does not exist"));
-  }
-
-  private static <K, V> K getKey(Map<K, V> map, V value) {
-    for (Map.Entry<K, V> entry : map.entrySet()) {
-      if (entry.getValue().equals(value)) {
-        return entry.getKey();
-      }
-    }
-    throw new RuntimeException("value " + value + " does not exist");
-  }
-
   @Override
   public void addStation(StationId id, StationType type) {
     if (stationMap.containsKey(id)) {
@@ -58,7 +44,7 @@ public class ModelServiceProvider<StationId, LineId> implements ModelService<Sta
     Station nextStation = getStation(nextStationId);
     for (Route route : station.getRoutes(destinationType)) {
       if (route.start() == nextStation) {
-        StationId endStationId = getKey(stationMap, route.end());
+        StationId endStationId = ModelServiceUtils.getKey(stationMap, route.end());
         return Optional.of(endStationId);
       }
     }
@@ -66,10 +52,10 @@ public class ModelServiceProvider<StationId, LineId> implements ModelService<Sta
   }
 
   private Line getLine(LineId id) {
-    return get(lineMap, id);
+    return ModelServiceUtils.getValue(lineMap, id);
   }
 
   private Station getStation(StationId id) {
-    return get(stationMap, id);
+    return ModelServiceUtils.getValue(stationMap, id);
   }
 }
