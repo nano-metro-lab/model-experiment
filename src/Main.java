@@ -10,6 +10,7 @@ enum StationType implements model.core.StationType {
 
 public class Main {
   public static void main(String[] args) {
+    // can be used anywhere in the project
     var modelService = ModelServiceFactory.getInstance();
 
     GraphicalStation stationCircle = new GraphicalStation(StationType.CIRCLE);
@@ -36,6 +37,7 @@ public class Main {
     GraphicalStation destination = modelService.findDestination(StationType.TRIANGLE, stationCircle, stationSquare1).orElseThrow();
     assert destination == stationSquare2;
 
+    // when starts a new game
     modelService.reset();
   }
 }
