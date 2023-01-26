@@ -1,7 +1,6 @@
 import model.service.ModelService;
 import model.service.ModelServiceImpl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 enum StationType implements model.core.StationType {
@@ -19,7 +18,7 @@ public class Main {
     GraphicalStation stationTriangle1 = new GraphicalStation(StationType.TRIANGLE);
     GraphicalStation stationTriangle2 = new GraphicalStation(StationType.TRIANGLE);
 
-    List<GraphicalStation> stations = new ArrayList<>(List.of(stationCircle, stationSquare1, stationSquare2, stationTriangle1, stationTriangle2));
+    List<GraphicalStation> stations = List.of(stationCircle, stationSquare1, stationSquare2, stationTriangle1, stationTriangle2);
     stations.forEach(station -> modelService.addStation(station, station.getType()));
 
     GraphicalLine lineCircleToSquare = new GraphicalLine();
