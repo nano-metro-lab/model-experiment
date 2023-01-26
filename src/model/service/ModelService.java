@@ -14,9 +14,9 @@ public interface ModelService<StationId, LineId> {
 
   Optional<Route<StationId>> findRoute(StationType destination, StationId stationId, StationId nextStationId);
 
-  interface Route<StationId> {
-    StationId start();
+  interface Route<TStationId> {
+    TStationId start();
 
-    StationId end();
+    TStationId end();
   }
 }
