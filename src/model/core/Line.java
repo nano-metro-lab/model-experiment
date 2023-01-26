@@ -25,7 +25,7 @@ public class Line {
     StationNode sentinel = new StationNode(null);
     StationNode lastNode = sentinel;
     for (Station station : stations) {
-      StationNode node = getPossibleNode(station).orElseGet(() -> {
+      StationNode node = findNode(station).orElseGet(() -> {
         StationNode newNode = new StationNode(station);
         nodeMap.put(station, newNode);
         station.addLine(this);
@@ -83,11 +83,11 @@ public class Line {
   }
 
   private StationNode getNode(Station station) {
-    return getPossibleNode(station)
+    return findNode(station)
       .orElseThrow(() -> new IllegalArgumentException("station is not on this line"));
   }
 
-  private Optional<StationNode> getPossibleNode(Station station) {
+  private Optional<StationNode> findNode(Station station) {
     return Optional.ofNullable(nodeMap.get(station));
   }
 
