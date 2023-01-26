@@ -1,6 +1,6 @@
-import model.Line;
-import model.Passenger;
-import model.Station;
+import model.core.Line;
+import model.core.Passenger;
+import model.core.Station;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class Main {
     lineSquareToTriangle2.update(List.of(stationSquare, stationTriangle2));
   }
 
-  private enum StationType implements model.StationType {
+  private enum StationType implements model.core.StationType {
     CIRCLE, SQUARE, TRIANGLE
   }
 }

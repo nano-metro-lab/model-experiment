@@ -1,4 +1,4 @@
-package model;
+package model.core;
 
 import java.util.*;
 import java.util.function.UnaryOperator;
