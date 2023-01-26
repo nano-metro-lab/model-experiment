@@ -11,11 +11,9 @@ record Route(
   int transferLength,
   int totalLength
 ) {
-  static final Comparator<Route> comparator =
-    Comparator
-      .comparingInt(Route::transferTimes)
-      .thenComparingInt(Route::totalLength)
-      .thenComparingInt(Route::transferLength);
+  static final Comparator<Route> comparator = Comparator.comparingInt(Route::transferTimes)
+    .thenComparingInt(Route::totalLength)
+    .thenComparingInt(Route::transferLength);
 
   static int average(Collection<Route> routes, Function<Route, Integer> mapper) {
     double average = (double) routes.stream().map(mapper).reduce(0, Integer::sum) / routes.size();
