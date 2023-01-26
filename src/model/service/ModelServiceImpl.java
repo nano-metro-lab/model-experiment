@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class ModelServiceProvider<StationId, LineId> implements ModelService<StationId, LineId> {
+public class ModelServiceImpl<StationId, LineId> implements ModelService<StationId, LineId> {
   private final Map<StationId, Station> stationMap = new HashMap<>();
   private final Map<LineId, Line> lineMap = new HashMap<>();
 
@@ -46,7 +46,7 @@ public class ModelServiceProvider<StationId, LineId> implements ModelService<Sta
   @Override
   public void updateLine(LineId id, List<StationId> stationIds) {
     Line line = getLine(id);
-    List<Station> stations = stationIds.stream().map(ModelServiceProvider.this::getStation).toList();
+    List<Station> stations = stationIds.stream().map(ModelServiceImpl.this::getStation).toList();
     line.update(stations);
     stationMap.values().forEach(Station::clearRoutesMap);
   }

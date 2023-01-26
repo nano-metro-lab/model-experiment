@@ -1,11 +1,11 @@
 import model.service.ModelService;
-import model.service.ModelServiceProvider;
+import model.service.ModelServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
-  private static final ModelService<GraphicalStation, GraphicalLine> modelService = new ModelServiceProvider<>();
+  private static final ModelService<GraphicalStation, GraphicalLine> modelService = new ModelServiceImpl<>();
 
   public static void main(String[] args) {
     GraphicalStation stationCircle = new GraphicalStation(StationType.CIRCLE);
