@@ -15,6 +15,19 @@ public class ModelServiceProvider<StationId, LineId> implements ModelService<Sta
   private final Map<LineId, Line> lineMap = new HashMap<>();
 
   @Override
+  public Optional<StationId> findDestination(StationType destinationType, StationId stationId, StationId nextStationId) {
+    Station station = getStation(stationId);
+    Station nextStation = getStation(nextStationId);
+    for (Route route : station.getRoutes(destinationType)) {
+      if (route.start() == nextStation) {
+        StationId endStationId = ModelServiceUtils.getKey(stationMap, route.end());
+        return Optional.of(endStationId);
+      }
+    }
+    return Optional.empty();
+  }
+
+  @Override
   public void addStation(StationId id, StationType type) {
     if (stationMap.containsKey(id)) {
       throw new RuntimeException("station with id " + id + " already exists");
@@ -36,19 +49,6 @@ public class ModelServiceProvider<StationId, LineId> implements ModelService<Sta
     List<Station> stations = stationIds.stream().map(ModelServiceProvider.this::getStation).toList();
     line.update(stations);
     stationMap.values().forEach(Station::clearRoutesMap);
-  }
-
-  @Override
-  public Optional<StationId> findDestination(StationType destinationType, StationId stationId, StationId nextStationId) {
-    Station station = getStation(stationId);
-    Station nextStation = getStation(nextStationId);
-    for (Route route : station.getRoutes(destinationType)) {
-      if (route.start() == nextStation) {
-        StationId endStationId = ModelServiceUtils.getKey(stationMap, route.end());
-        return Optional.of(endStationId);
-      }
-    }
-    return Optional.empty();
   }
 
   private Line getLine(LineId id) {
