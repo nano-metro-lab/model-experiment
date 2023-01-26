@@ -4,10 +4,14 @@ import model.service.ModelServiceImpl;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Main {
-  private static final ModelService<GraphicalStation, GraphicalLine> modelService = new ModelServiceImpl<>();
+enum StationType implements model.core.StationType {
+  CIRCLE, SQUARE, TRIANGLE
+}
 
+public class Main {
   public static void main(String[] args) {
+    var modelService = ModelServiceFactory.getInstance();
+
     GraphicalStation stationCircle = new GraphicalStation(StationType.CIRCLE);
     GraphicalStation stationSquare1 = new GraphicalStation(StationType.SQUARE);
     GraphicalStation stationSquare2 = new GraphicalStation(StationType.SQUARE);
@@ -34,31 +38,40 @@ public class Main {
 
     modelService.reset();
   }
+}
 
-  private enum StationType implements model.core.StationType {
-    CIRCLE, SQUARE, TRIANGLE
+@SuppressWarnings("ALL")
+class GraphicalStation {
+  private final StationType type;
+  private Object whateverAttribute;
+
+  public GraphicalStation(StationType type) {
+    this.type = type;
   }
 
-  @SuppressWarnings("ClassCanBeRecord")
-  private static class GraphicalStation {
-    private final StationType type;
-
-    GraphicalStation(StationType type) {
-      this.type = type;
-    }
-
-    StationType getType() {
-      return type;
-    }
-
-    @SuppressWarnings("unused")
-    void render() {
-    }
+  public StationType getType() {
+    return type;
   }
 
-  private static class GraphicalLine {
-    @SuppressWarnings("unused")
-    void render() {
+  public void whateverMethod() {
+  }
+}
+
+@SuppressWarnings("ALL")
+class GraphicalLine {
+  private Object whateverAttribute;
+
+  public void whateverMethod() {
+  }
+}
+
+class ModelServiceFactory {
+  private static ModelService<GraphicalStation, GraphicalLine> instance;
+
+  public static ModelService<GraphicalStation, GraphicalLine> getInstance() {
+    if (instance == null) {
+      instance = new ModelServiceImpl<>();
     }
+    return instance;
   }
 }
