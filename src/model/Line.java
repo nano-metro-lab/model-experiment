@@ -36,6 +36,13 @@ public class Line {
     firstNode.left = null;
   }
 
+  public void reset() {
+    for (Station station : nodeMap.keySet()) {
+      station.removeLine(this);
+    }
+    nodeMap.clear();
+  }
+
   Optional<Route> findRouteFromLeft(Station station, StationType destination) {
     return findRoute(station, destination, StationNode::getLeft);
   }
