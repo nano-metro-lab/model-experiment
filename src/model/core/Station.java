@@ -15,10 +15,6 @@ public class Station {
     return type;
   }
 
-  public Line[] getLines() {
-    return lines.toArray(Line[]::new);
-  }
-
   public void addLine(Line line) {
     lines.add(line);
   }
@@ -50,7 +46,7 @@ public class Station {
 
     private List<Route> find(StationType destinationType) {
       List<Route> routes = new ArrayList<>();
-      for (Line line : Station.this.getLines()) {
+      for (Line line : Station.this.lines) {
         line.findRouteFromLeft(destinationType, Station.this).ifPresent(routes::add);
         line.findRouteFromRight(destinationType, Station.this).ifPresent(routes::add);
       }

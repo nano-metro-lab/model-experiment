@@ -67,19 +67,14 @@ public class Line {
     nodeIterator.reset(routeStartNode);
     for (int distance = 1; nodeIterator.hasNext(); distance++) {
       StationNode node = nodeIterator.next();
-      for (Line line : node.station.getLines()) {
-        if (line == this) {
-          continue;
-        }
-        List<Route> transferRoutes = node.station.getRoutes(destinationType);
-        if (transferRoutes.isEmpty()) {
-          continue;
-        }
-        int transferTimes = 1 + Route.average(transferRoutes, Route::transferTimes);
-        int transferLength = Route.average(transferRoutes, Route::totalLength);
-        Route route = new Route(routeStartNode.station, node.station, transferTimes, transferLength, distance + transferLength);
-        availableRoutes.add(route);
+      List<Route> transferRoutes = node.station.getRoutes(destinationType);
+      if (transferRoutes.isEmpty()) {
+        continue;
       }
+      int transferTimes = 1 + Route.average(transferRoutes, Route::transferTimes);
+      int transferLength = Route.average(transferRoutes, Route::totalLength);
+      Route route = new Route(routeStartNode.station, node.station, transferTimes, transferLength, distance + transferLength);
+      availableRoutes.add(route);
     }
     return availableRoutes.stream().min(Route.comparator);
   }
