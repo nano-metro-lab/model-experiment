@@ -11,16 +11,22 @@ import java.util.Map;
 import java.util.Optional;
 
 public class ModelServiceImpl<StationId, LineId> implements ModelService<StationId, LineId> {
+  private final Map<Station, StationId> stationIdMap = new HashMap<>();
   private final Map<StationId, Station> stationMap = new HashMap<>();
   private final Map<LineId, Line> lineMap = new HashMap<>();
 
+  private static <K, V> V getValue(Map<K, V> map, K key) {
+    return Optional.ofNullable(map.get(key))
+      .orElseThrow(() -> new RuntimeException(key + " does not exist"));
+  }
+
   @Override
   public Optional<StationId> findDestination(StationType destinationType, StationId stationId, StationId nextStationId) {
-    Station station = getStation(stationId);
-    Station nextStation = getStation(nextStationId);
+    Station station = getValue(stationMap, stationId);
+    Station nextStation = getValue(stationMap, nextStationId);
     for (Route route : station.getRoutes(destinationType)) {
       if (route.start() == nextStation) {
-        StationId endStationId = getStationId(route.end());
+        StationId endStationId = getValue(stationIdMap, route.end());
         return Optional.of(endStationId);
       }
     }
@@ -32,7 +38,9 @@ public class ModelServiceImpl<StationId, LineId> implements ModelService<Station
     if (stationMap.containsKey(id)) {
       throw new RuntimeException("station with id " + id + " already exists");
     }
-    stationMap.put(id, new Station(type));
+    Station station = new Station(type);
+    stationIdMap.put(station, id);
+    stationMap.put(id, station);
   }
 
   @Override
@@ -45,27 +53,18 @@ public class ModelServiceImpl<StationId, LineId> implements ModelService<Station
 
   @Override
   public void updateLine(LineId id, List<StationId> stationIds) {
-    Line line = getLine(id);
-    List<Station> stations = stationIds.stream().map(ModelServiceImpl.this::getStation).toList();
+    Line line = getValue(lineMap, id);
+    List<Station> stations = stationIds.stream()
+      .map(stationId -> getValue(stationMap, stationId))
+      .toList();
     line.update(stations);
     stationMap.values().forEach(Station::clearRoutesMap);
   }
 
   @Override
   public void reset() {
+    stationIdMap.clear();
     stationMap.clear();
     lineMap.clear();
-  }
-
-  private Line getLine(LineId id) {
-    return ModelServiceUtils.getValue(lineMap, id);
-  }
-
-  private Station getStation(StationId id) {
-    return ModelServiceUtils.getValue(stationMap, id);
-  }
-
-  private StationId getStationId(Station station) {
-    return ModelServiceUtils.getKey(stationMap, station);
   }
 }
