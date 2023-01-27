@@ -20,7 +20,7 @@ public class ModelServiceImpl<StationId, LineId> implements ModelService<Station
     Station nextStation = getStation(nextStationId);
     for (Route route : station.getRoutes(destinationType)) {
       if (route.start() == nextStation) {
-        StationId endStationId = ModelServiceUtils.getKey(stationMap, route.end());
+        StationId endStationId = getStationId(route.end());
         return Optional.of(endStationId);
       }
     }
@@ -63,5 +63,9 @@ public class ModelServiceImpl<StationId, LineId> implements ModelService<Station
 
   private Station getStation(StationId id) {
     return ModelServiceUtils.getValue(stationMap, id);
+  }
+
+  private StationId getStationId(Station station) {
+    return ModelServiceUtils.getKey(stationMap, station);
   }
 }
