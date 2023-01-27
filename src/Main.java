@@ -19,7 +19,9 @@ public class Main {
     GraphicalStation stationTriangle2 = new GraphicalStation(StationType.TRIANGLE);
 
     List<GraphicalStation> stations = List.of(stationCircle, stationSquare1, stationSquare2, stationTriangle1, stationTriangle2);
-    stations.forEach(station -> modelService.addStation(station, station.getType()));
+    for (GraphicalStation station : stations) {
+      modelService.addStation(station, station.getType());
+    }
 
     GraphicalLine lineCircleToSquare = new GraphicalLine();
     modelService.addLine(lineCircleToSquare);

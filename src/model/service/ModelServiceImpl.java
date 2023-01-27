@@ -58,7 +58,9 @@ public class ModelServiceImpl<StationId, LineId> implements ModelService<Station
       .map(stationId -> getValue(stationMap, stationId))
       .toList();
     line.update(stations);
-    stationMap.values().forEach(Station::clearRoutesMap);
+    for (Station station : stationMap.values()) {
+      station.clearRoutesMap();
+    }
   }
 
   @Override

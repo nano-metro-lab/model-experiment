@@ -16,7 +16,9 @@ public class Line {
     }
     if (!nodeMap.isEmpty()) {
       Set<Station> staleStations = new HashSet<>(nodeMap.keySet());
-      stations.forEach(staleStations::remove);
+      for (Station station : stations) {
+        staleStations.remove(station);
+      }
       for (Station station : staleStations) {
         nodeMap.remove(station);
         station.removeLine(this);
