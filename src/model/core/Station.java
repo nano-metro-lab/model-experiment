@@ -32,12 +32,13 @@ public class Station {
   }
 
   private class RoutesMap {
+    private static final List<Route> emptyRoutes = Collections.emptyList();
     private final Map<StationType, List<Route>> map = new HashMap<>();
 
     List<Route> get(StationType destinationType) {
       return Optional.ofNullable(map.get(destinationType)).orElseGet(() -> {
         // prevent infinite loop
-        map.put(destinationType, List.of());
+        map.put(destinationType, emptyRoutes);
         List<Route> routes = find(destinationType);
         map.put(destinationType, routes);
         return routes;
