@@ -33,47 +33,46 @@ public class Station {
   }
 
   private class RoutesMap {
-    private static final List<Comparator<Route>> routeComparators;
-
-    static {
-      Comparator<Route> transferComparator = Comparator.comparingInt(Route::transfer);
-      Comparator<Route> lengthComparator = Comparator.comparingInt(Route::length);
-      routeComparators = List.of(transferComparator, lengthComparator);
-    }
-
-    private final Map<StationType, List<Route>> map = new HashMap<>();
+    private final Map<Line, LineRoutesMap> map = new HashMap<>();
 
     List<Route> get(StationType destinationType) {
-      return Optional.ofNullable(map.get(destinationType)).orElseGet(() -> {
-        // prevent infinite loop
-        map.put(destinationType, List.of());
-        List<Route> routes = find(destinationType);
-        map.put(destinationType, routes);
-        return routes;
-      });
-    }
-
-    private List<Route> find(StationType destinationType) {
       return Station.this.lines.stream()
         .flatMap(line -> {
-          List<Route> routes = Stream.concat(
-            line.findRoutesFromLeft(destinationType, Station.this),
-            line.findRoutesFromRight(destinationType, Station.this)
-          ).toList();
-          if (routes.isEmpty()) {
+          if (line.isFindingRoutes()) {
             return Stream.empty();
           }
-          return routeComparators.stream()
-            .flatMap(routeComparator -> {
-              Route bestRoute = routes.stream().min(routeComparator).orElseThrow();
-              return routes.stream()
-                .filter(route -> route == bestRoute || routeComparator.compare(route, bestRoute) == 0);
-            }).distinct();
+          LineRoutesMap lineRoutesMap = getLineRoutesMap(line);
+          return lineRoutesMap.get(destinationType).stream();
         }).toList();
     }
 
     void clear() {
       map.clear();
+    }
+
+    private LineRoutesMap getLineRoutesMap(Line line) {
+      return Optional.ofNullable(map.get(line)).orElseGet(() -> {
+        LineRoutesMap lineRoutesMap = new LineRoutesMap(line);
+        map.put(line, lineRoutesMap);
+        return lineRoutesMap;
+      });
+    }
+
+    private class LineRoutesMap {
+      private final Line line;
+      private final Map<StationType, List<Route>> map = new HashMap<>();
+
+      LineRoutesMap(Line line) {
+        this.line = line;
+      }
+
+      List<Route> get(StationType destinationType) {
+        return Optional.ofNullable(map.get(destinationType)).orElseGet(() -> {
+          List<Route> routes = line.findRoutes(destinationType, Station.this).toList();
+          map.put(destinationType, routes);
+          return routes;
+        });
+      }
     }
   }
 }

@@ -9,7 +9,24 @@ public class Line {
     .comparingInt(Route::transfer)
     .thenComparingInt(Route::length);
 
+  private static final List<Comparator<Route>> routeComparators;
+
+  static {
+    Comparator<Route> transferComparator = Comparator.comparingInt(Route::transfer);
+    Comparator<Route> lengthComparator = Comparator.comparingInt(Route::length);
+    routeComparators = List.of(transferComparator, lengthComparator);
+  }
+
   private final Map<Station, StationNode> nodeMap = new HashMap<>();
+  private boolean isFindingRoutes = false;
+
+  private static Stream<Route> getBestRoutes(List<Route> routes, Comparator<Route> comparator) {
+    if (routes.isEmpty()) {
+      return Stream.empty();
+    }
+    Route bestRoute = routes.stream().min(comparator).orElseThrow();
+    return routes.stream().filter(route -> comparator.compare(route, bestRoute) == 0);
+  }
 
   public void update(List<Station> stations) {
     if (stations.isEmpty()) {
@@ -47,11 +64,27 @@ public class Line {
     firstNode.left = null;
   }
 
-  Stream<Route> findRoutesFromLeft(StationType destinationType, Station station) {
+  boolean isFindingRoutes() {
+    return isFindingRoutes;
+  }
+
+  Stream<Route> findRoutes(StationType destinationType, Station station) {
+    isFindingRoutes = true;
+    List<Route> routes = Stream.concat(
+      findRoutesFromLeft(destinationType, station),
+      findRoutesFromRight(destinationType, station)
+    ).toList();
+    isFindingRoutes = false;
+    return routeComparators.stream()
+      .flatMap(routeComparator -> getBestRoutes(routes, routeComparator))
+      .distinct();
+  }
+
+  private Stream<Route> findRoutesFromLeft(StationType destinationType, Station station) {
     return findRoutes(destinationType, station, StationNode::getLeft);
   }
 
-  Stream<Route> findRoutesFromRight(StationType destinationType, Station station) {
+  private Stream<Route> findRoutesFromRight(StationType destinationType, Station station) {
     return findRoutes(destinationType, station, StationNode::getRight);
   }
 
@@ -85,12 +118,7 @@ public class Line {
         routes.add(route);
       }
     }
-    if (routes.isEmpty()) {
-      return Stream.empty();
-    }
-    Route bestRoute = routes.stream().min(routeComparator).orElseThrow();
-    return routes.stream()
-      .filter(route -> route == bestRoute || routeComparator.compare(route, bestRoute) == 0);
+    return getBestRoutes(routes, routeComparator);
   }
 
   private StationNode getNode(Station station) {
