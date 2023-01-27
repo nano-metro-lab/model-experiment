@@ -3,10 +3,9 @@ package model.service;
 import model.core.StationType;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ModelService<StationId, LineId> {
-  Optional<StationId> findDestination(StationType destinationType, StationId stationId, StationId nextStationId);
+  List<StationId> findDestinations(StationType destinationType, StationId stationId, StationId nextStationId);
 
   void addStation(StationId id, StationType type);
 

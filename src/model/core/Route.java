@@ -1,22 +1,16 @@
 package model.core;
 
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.function.Function;
+import java.util.function.ToIntFunction;
 
 public record Route(
-  Station start,
-  Station end,
-  int transferTimes,
-  int transferLength,
-  int totalLength
+  Station next,
+  Station last,
+  int length,
+  int transfer
 ) {
-  static final Comparator<Route> comparator = Comparator.comparingInt(Route::transferTimes)
-    .thenComparingInt(Route::totalLength)
-    .thenComparingInt(Route::transferLength);
-
-  static int average(Collection<Route> routes, Function<Route, Integer> mapper) {
-    double average = (double) routes.stream().map(mapper).reduce(0, Integer::sum) / routes.size();
+  static int average(Collection<Route> routes, ToIntFunction<Route> mapper) {
+    double average = routes.stream().mapToInt(mapper).average().orElse(0.0);
     return (int) Math.round(average);
   }
 }

@@ -1,6 +1,7 @@
 package model.core;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class Station {
   private final StationType type;
@@ -32,13 +33,20 @@ public class Station {
   }
 
   private class RoutesMap {
-    private static final List<Route> emptyRoutes = Collections.emptyList();
+    private static final List<Comparator<Route>> routeComparators;
+
+    static {
+      Comparator<Route> transferComparator = Comparator.comparingInt(Route::transfer);
+      Comparator<Route> lengthComparator = Comparator.comparingInt(Route::length);
+      routeComparators = List.of(transferComparator, lengthComparator);
+    }
+
     private final Map<StationType, List<Route>> map = new HashMap<>();
 
     List<Route> get(StationType destinationType) {
       return Optional.ofNullable(map.get(destinationType)).orElseGet(() -> {
         // prevent infinite loop
-        map.put(destinationType, emptyRoutes);
+        map.put(destinationType, List.of());
         List<Route> routes = find(destinationType);
         map.put(destinationType, routes);
         return routes;
@@ -46,12 +54,22 @@ public class Station {
     }
 
     private List<Route> find(StationType destinationType) {
-      List<Route> routes = new ArrayList<>();
-      for (Line line : Station.this.lines) {
-        line.findRouteFromLeft(destinationType, Station.this).ifPresent(routes::add);
-        line.findRouteFromRight(destinationType, Station.this).ifPresent(routes::add);
-      }
-      return List.copyOf(routes);
+      return Station.this.lines.stream()
+        .flatMap(line -> {
+          List<Route> routes = Stream.concat(
+            line.findRoutesFromLeft(destinationType, Station.this),
+            line.findRoutesFromRight(destinationType, Station.this)
+          ).toList();
+          if (routes.isEmpty()) {
+            return Stream.empty();
+          }
+          return routeComparators.stream()
+            .flatMap(routeComparator -> {
+              Route bestRoute = routes.stream().min(routeComparator).orElseThrow();
+              return routes.stream()
+                .filter(route -> route == bestRoute || routeComparator.compare(route, bestRoute) == 0);
+            }).distinct();
+        }).toList();
     }
 
     void clear() {

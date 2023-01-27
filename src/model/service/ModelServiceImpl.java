@@ -1,7 +1,6 @@
 package model.service;
 
 import model.core.Line;
-import model.core.Route;
 import model.core.Station;
 import model.core.StationType;
 
@@ -21,16 +20,13 @@ public class ModelServiceImpl<StationId, LineId> implements ModelService<Station
   }
 
   @Override
-  public Optional<StationId> findDestination(StationType destinationType, StationId stationId, StationId nextStationId) {
+  public List<StationId> findDestinations(StationType destinationType, StationId stationId, StationId nextStationId) {
     Station station = getValue(stationMap, stationId);
     Station nextStation = getValue(stationMap, nextStationId);
-    for (Route route : station.getRoutes(destinationType)) {
-      if (route.start() == nextStation) {
-        StationId endStationId = getValue(stationIdMap, route.end());
-        return Optional.of(endStationId);
-      }
-    }
-    return Optional.empty();
+    return station.getRoutes(destinationType).stream()
+      .filter(route -> route.next() == nextStation)
+      .map(route -> getValue(stationIdMap, route.last()))
+      .toList();
   }
 
   @Override

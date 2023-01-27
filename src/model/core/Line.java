@@ -2,8 +2,13 @@ package model.core;
 
 import java.util.*;
 import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 
 public class Line {
+  private static final Comparator<Route> routeComparator = Comparator
+    .comparingInt(Route::transfer)
+    .thenComparingInt(Route::length);
+
   private final Map<Station, StationNode> nodeMap = new HashMap<>();
 
   public void update(List<Station> stations) {
@@ -42,41 +47,50 @@ public class Line {
     firstNode.left = null;
   }
 
-  Optional<Route> findRouteFromLeft(StationType destinationType, Station station) {
-    return findRoute(destinationType, station, StationNode::getLeft);
+  Stream<Route> findRoutesFromLeft(StationType destinationType, Station station) {
+    return findRoutes(destinationType, station, StationNode::getLeft);
   }
 
-  Optional<Route> findRouteFromRight(StationType destinationType, Station station) {
-    return findRoute(destinationType, station, StationNode::getRight);
+  Stream<Route> findRoutesFromRight(StationType destinationType, Station station) {
+    return findRoutes(destinationType, station, StationNode::getRight);
   }
 
-  private Optional<Route> findRoute(StationType destinationType, Station station, UnaryOperator<StationNode> successor) {
+  private Stream<Route> findRoutes(StationType destinationType, Station station, UnaryOperator<StationNode> successor) {
     StationNode routeStartNode = successor.apply(getNode(station));
     if (routeStartNode == null) {
-      return Optional.empty();
+      return Stream.empty();
     }
-    StationNodeIterator nodeIterator = new StationNodeIterator(routeStartNode, successor);
-    for (int distance = 1; nodeIterator.hasNext(); distance++) {
-      StationNode node = nodeIterator.next();
-      if (node.station.getType().equals(destinationType)) {
-        Route route = new Route(routeStartNode.station, node.station, 0, 0, distance);
-        return Optional.of(route);
+    {
+      StationNodeIterator nodeIterator = new StationNodeIterator(routeStartNode, successor);
+      for (int distance = 1; nodeIterator.hasNext(); distance++) {
+        StationNode node = nodeIterator.next();
+        if (node.station.getType().equals(destinationType)) {
+          Route route = new Route(routeStartNode.station, node.station, distance, 0);
+          return Stream.of(route);
+        }
       }
     }
-    List<Route> availableRoutes = new ArrayList<>();
-    nodeIterator.reset(routeStartNode);
-    for (int distance = 1; nodeIterator.hasNext(); distance++) {
-      StationNode node = nodeIterator.next();
-      List<Route> transferRoutes = node.station.getRoutes(destinationType);
-      if (transferRoutes.isEmpty()) {
-        continue;
+    List<Route> routes = new ArrayList<>();
+    {
+      StationNodeIterator nodeIterator = new StationNodeIterator(routeStartNode, successor);
+      for (int distance = 1; nodeIterator.hasNext(); distance++) {
+        StationNode node = nodeIterator.next();
+        List<Route> transferRoutes = node.station.getRoutes(destinationType);
+        if (transferRoutes.isEmpty()) {
+          continue;
+        }
+        int averageLength = Route.average(transferRoutes, Route::length);
+        int averageTransfer = Route.average(transferRoutes, Route::transfer);
+        Route route = new Route(routeStartNode.station, node.station, distance + averageLength, 1 + averageTransfer);
+        routes.add(route);
       }
-      int transferTimes = 1 + Route.average(transferRoutes, Route::transferTimes);
-      int transferLength = Route.average(transferRoutes, Route::totalLength);
-      Route route = new Route(routeStartNode.station, node.station, transferTimes, transferLength, distance + transferLength);
-      availableRoutes.add(route);
     }
-    return availableRoutes.stream().min(Route.comparator);
+    if (routes.isEmpty()) {
+      return Stream.empty();
+    }
+    Route bestRoute = routes.stream().min(routeComparator).orElseThrow();
+    return routes.stream()
+      .filter(route -> route == bestRoute || routeComparator.compare(route, bestRoute) == 0);
   }
 
   private StationNode getNode(Station station) {
@@ -110,13 +124,9 @@ public class Line {
     private final UnaryOperator<StationNode> successor;
     private StationNode current;
 
-    StationNodeIterator(StationNode node, UnaryOperator<StationNode> successor) {
+    StationNodeIterator(StationNode current, UnaryOperator<StationNode> successor) {
       this.successor = successor;
-      reset(node);
-    }
-
-    void reset(StationNode node) {
-      current = node;
+      this.current = current;
     }
 
     @Override
