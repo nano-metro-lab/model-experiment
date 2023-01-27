@@ -1,9 +1,6 @@
 package model.core;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Station {
   private final StationType type;
@@ -42,14 +39,13 @@ public class Station {
     private final Map<StationType, List<Route>> map = new HashMap<>();
 
     List<Route> get(StationType destinationType) {
-      if (map.containsKey(destinationType)) {
-        return map.get(destinationType);
-      }
-      // prevent infinite loop
-      map.put(destinationType, List.of());
-      List<Route> routes = find(destinationType);
-      map.put(destinationType, routes);
-      return routes;
+      return Optional.ofNullable(map.get(destinationType)).orElseGet(() -> {
+        // prevent infinite loop
+        map.put(destinationType, List.of());
+        List<Route> routes = find(destinationType);
+        map.put(destinationType, routes);
+        return routes;
+      });
     }
 
     private List<Route> find(StationType destinationType) {
