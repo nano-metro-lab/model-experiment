@@ -71,21 +71,13 @@ public class Line {
   Stream<Route> findRoutes(StationType destinationType, Station station) {
     isFindingRoutes = true;
     List<Route> routes = Stream.concat(
-      findRoutesFromLeft(destinationType, station),
-      findRoutesFromRight(destinationType, station)
+      findRoutes(destinationType, station, StationNode::getLeft),
+      findRoutes(destinationType, station, StationNode::getRight)
     ).toList();
     isFindingRoutes = false;
     return routeComparators.stream()
       .flatMap(routeComparator -> getBestRoutes(routes, routeComparator))
       .distinct();
-  }
-
-  private Stream<Route> findRoutesFromLeft(StationType destinationType, Station station) {
-    return findRoutes(destinationType, station, StationNode::getLeft);
-  }
-
-  private Stream<Route> findRoutesFromRight(StationType destinationType, Station station) {
-    return findRoutes(destinationType, station, StationNode::getRight);
   }
 
   private Stream<Route> findRoutes(StationType destinationType, Station station, UnaryOperator<StationNode> successor) {
