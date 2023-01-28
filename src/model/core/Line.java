@@ -31,7 +31,7 @@ public class Line {
   public void update(List<Station> stations) {
     if (stations.isEmpty()) {
       for (Station station : nodeMap.keySet()) {
-        station.removeLine(this);
+        station.removeLine(Line.this);
       }
       nodeMap.clear();
       return;
@@ -43,7 +43,7 @@ public class Line {
       }
       for (Station station : staleStations) {
         nodeMap.remove(station);
-        station.removeLine(this);
+        station.removeLine(Line.this);
       }
     }
     StationNode sentinel = new StationNode(null);
@@ -52,7 +52,7 @@ public class Line {
       StationNode node = findNode(station).orElseGet(() -> {
         StationNode newNode = new StationNode(station);
         nodeMap.put(station, newNode);
-        station.addLine(this);
+        station.addLine(Line.this);
         return newNode;
       });
       node.left = lastNode;
