@@ -35,9 +35,9 @@ public class Main {
     modelService.addLine(lineSquare2ToTriangle2);
     modelService.updateLine(lineSquare2ToTriangle2, List.of(stationSquare2, stationTriangle2));
 
-    List<GraphicalStation> destinations = modelService.findDestinations(StationType.TRIANGLE, stationCircle, stationSquare1);
-    assert destinations.size() == 1;
-    assert destinations.get(0) == stationSquare2;
+    List<GraphicalStation> transferStations = modelService.findDestinations(StationType.TRIANGLE, stationCircle, stationSquare1);
+    assert transferStations.size() == 1;
+    assert transferStations.get(0) == stationSquare2;
 
     // when starts a new game
     modelService.reset();
