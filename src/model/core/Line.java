@@ -5,10 +5,6 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 public class Line {
-  private static final Comparator<Route> routeComparator = Comparator
-    .comparingInt(Route::transfer)
-    .thenComparingInt(Route::length);
-
   private static final List<Comparator<Route>> routeComparators;
 
   static {
@@ -20,12 +16,16 @@ public class Line {
   private final Map<Station, StationNode> nodeMap = new HashMap<>();
   private boolean isFindingRoutes = false;
 
-  private static Stream<Route> getBestRoutes(List<Route> routes, Comparator<Route> comparator) {
+  private static Stream<Route> getBestRoutes(List<Route> routes) {
     if (routes.isEmpty()) {
       return Stream.empty();
     }
-    Route bestRoute = routes.stream().min(comparator).orElseThrow();
-    return routes.stream().filter(route -> comparator.compare(route, bestRoute) == 0);
+    return routeComparators.stream()
+      .flatMap(routeComparator -> {
+        Route bestRoute = routes.stream().min(routeComparator).orElseThrow();
+        return routes.stream()
+          .filter(route -> route == bestRoute || routeComparator.compare(route, bestRoute) == 0);
+      }).distinct();
   }
 
   public void update(List<Station> stations) {
@@ -68,16 +68,14 @@ public class Line {
     return isFindingRoutes;
   }
 
-  Stream<Route> findRoutes(StationType destinationType, Station station) {
+  List<Route> findRoutes(StationType destinationType, Station station) {
     isFindingRoutes = true;
     List<Route> routes = Stream.concat(
       findRoutes(destinationType, station, StationNode::getLeft),
       findRoutes(destinationType, station, StationNode::getRight)
     ).toList();
     isFindingRoutes = false;
-    return routeComparators.stream()
-      .flatMap(routeComparator -> getBestRoutes(routes, routeComparator))
-      .distinct();
+    return getBestRoutes(routes).toList();
   }
 
   private Stream<Route> findRoutes(StationType destinationType, Station station, UnaryOperator<StationNode> successor) {
@@ -112,7 +110,7 @@ public class Line {
         routes.add(route);
       }
     }
-    return getBestRoutes(routes, routeComparator);
+    return getBestRoutes(routes);
   }
 
   private static class StationNode {

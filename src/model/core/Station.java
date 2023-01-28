@@ -68,7 +68,7 @@ public class Station {
 
       List<Route> get(StationType destinationType) {
         return Optional.ofNullable(map.get(destinationType)).orElseGet(() -> {
-          List<Route> routes = line.findRoutes(destinationType, Station.this).toList();
+          List<Route> routes = line.findRoutes(destinationType, Station.this);
           map.put(destinationType, routes);
           return routes;
         });
