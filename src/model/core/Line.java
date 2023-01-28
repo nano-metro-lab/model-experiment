@@ -101,13 +101,12 @@ public class Line {
       for (int distance = 1; nodeIterator.hasNext(); distance++) {
         StationNode node = nodeIterator.next();
         List<Route> transferRoutes = node.station.getRoutes(destinationType);
-        if (transferRoutes.isEmpty()) {
-          continue;
+        for (Route transferRoute : transferRoutes) {
+          int length = distance + transferRoute.length();
+          int transfer = 1 + transferRoute.transfer();
+          Route route = new Route(routeNextNode.station, node.station, length, transfer);
+          routes.add(route);
         }
-        int averageLength = Route.average(transferRoutes, Route::length);
-        int averageTransfer = Route.average(transferRoutes, Route::transfer);
-        Route route = new Route(routeNextNode.station, node.station, distance + averageLength, 1 + averageTransfer);
-        routes.add(route);
       }
     }
     return getBestRoutes(routes);
