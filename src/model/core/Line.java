@@ -49,12 +49,13 @@ public class Line {
     StationNode sentinel = new StationNode(null);
     StationNode lastNode = sentinel;
     for (Station station : stations) {
-      StationNode node = Optional.ofNullable(nodeMap.get(station)).orElseGet(() -> {
-        StationNode newNode = new StationNode(station);
-        nodeMap.put(station, newNode);
-        station.addLine(Line.this);
-        return newNode;
-      });
+      StationNode node = Optional.ofNullable(nodeMap.get(station))
+        .orElseGet(() -> {
+          StationNode newNode = new StationNode(station);
+          nodeMap.put(station, newNode);
+          station.addLine(Line.this);
+          return newNode;
+        });
       node.left = lastNode;
       node.right = null;
       lastNode.right = node;

@@ -51,11 +51,12 @@ public class Station {
     }
 
     private LineRoutesMap getLineRoutesMap(Line line) {
-      return Optional.ofNullable(map.get(line)).orElseGet(() -> {
-        LineRoutesMap lineRoutesMap = new LineRoutesMap(line);
-        map.put(line, lineRoutesMap);
-        return lineRoutesMap;
-      });
+      return Optional.ofNullable(map.get(line))
+        .orElseGet(() -> {
+          LineRoutesMap lineRoutesMap = new LineRoutesMap(line);
+          map.put(line, lineRoutesMap);
+          return lineRoutesMap;
+        });
     }
 
     private class LineRoutesMap {
@@ -67,11 +68,12 @@ public class Station {
       }
 
       List<Route> get(StationType destinationType) {
-        return Optional.ofNullable(map.get(destinationType)).orElseGet(() -> {
-          List<Route> routes = line.findRoutes(destinationType, Station.this);
-          map.put(destinationType, routes);
-          return routes;
-        });
+        return Optional.ofNullable(map.get(destinationType))
+          .orElseGet(() -> {
+            List<Route> routes = line.findRoutes(destinationType, Station.this);
+            map.put(destinationType, routes);
+            return routes;
+          });
       }
     }
   }
