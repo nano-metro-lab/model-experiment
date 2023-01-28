@@ -14,7 +14,7 @@ public class Line {
   }
 
   private final Map<Station, StationNode> nodeMap = new HashMap<>();
-  private boolean isFindingRoutes = false;
+  private boolean isFindingRoutes;
 
   private static Stream<Route> getBestRoutes(List<Route> routes) {
     if (routes.isEmpty()) {
@@ -69,14 +69,14 @@ public class Line {
     return isFindingRoutes;
   }
 
-  List<Route> findRoutes(StationType destinationType, Station station) {
+  Stream<Route> findRoutes(StationType destinationType, Station station) {
     isFindingRoutes = true;
-    List<Route> routes = Stream.concat(
+    Stream<Route> routeStream = Stream.concat(
       findRoutes(destinationType, station, StationNode::getLeft),
       findRoutes(destinationType, station, StationNode::getRight)
-    ).toList();
+    );
     isFindingRoutes = false;
-    return getBestRoutes(routes).toList();
+    return getBestRoutes(routeStream.toList());
   }
 
   private Stream<Route> findRoutes(StationType destinationType, Station station, UnaryOperator<StationNode> successor) {
@@ -101,13 +101,14 @@ public class Line {
       StationNodeIterator nodeIterator = new StationNodeIterator(routeNextNode, successor);
       for (int distance = 1; nodeIterator.hasNext(); distance++) {
         StationNode node = nodeIterator.next();
-        List<Route> transferRoutes = node.station.getRoutes(destinationType);
-        for (Route transferRoute : transferRoutes) {
-          int length = distance + transferRoute.length();
-          int transfer = 1 + transferRoute.transfer();
-          Route route = new Route(routeNextNode.station, node.station, length, transfer);
-          routes.add(route);
-        }
+        int finalDistance = distance;
+        node.station.getRoutes(destinationType)
+          .forEach(transferRoute -> {
+            int length = finalDistance + transferRoute.length();
+            int transfer = 1 + transferRoute.transfer();
+            Route route = new Route(routeNextNode.station, node.station, length, transfer);
+            routes.add(route);
+          });
       }
     }
     return getBestRoutes(routes);

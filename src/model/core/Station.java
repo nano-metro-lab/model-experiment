@@ -24,7 +24,7 @@ public class Station {
     lines.remove(line);
   }
 
-  public List<Route> getRoutes(StationType destinationType) {
+  public Stream<Route> getRoutes(StationType destinationType) {
     return routesMap.get(destinationType);
   }
 
@@ -35,7 +35,7 @@ public class Station {
   private class RoutesMap {
     private final Map<Line, LineRoutesMap> map = new HashMap<>();
 
-    List<Route> get(StationType destinationType) {
+    Stream<Route> get(StationType destinationType) {
       return Station.this.lines.stream()
         .flatMap(line -> {
           if (line.isFindingRoutes()) {
@@ -43,7 +43,7 @@ public class Station {
           }
           LineRoutesMap lineRoutesMap = getLineRoutesMap(line);
           return lineRoutesMap.get(destinationType).stream();
-        }).toList();
+        });
     }
 
     void clear() {
@@ -70,7 +70,7 @@ public class Station {
       List<Route> get(StationType destinationType) {
         return Optional.ofNullable(map.get(destinationType))
           .orElseGet(() -> {
-            List<Route> routes = line.findRoutes(destinationType, Station.this);
+            List<Route> routes = line.findRoutes(destinationType, Station.this).toList();
             map.put(destinationType, routes);
             return routes;
           });

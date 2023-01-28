@@ -23,7 +23,7 @@ public class ModelServiceImpl<StationId, LineId> implements ModelService<Station
   public List<StationId> findDestinations(StationType destinationType, StationId stationId, StationId nextStationId) {
     Station station = getValue(stationMap, stationId);
     Station nextStation = getValue(stationMap, nextStationId);
-    return station.getRoutes(destinationType).stream()
+    return station.getRoutes(destinationType)
       .filter(route -> route.next() == nextStation)
       .map(route -> getValue(stationIdMap, route.last()))
       .toList();
