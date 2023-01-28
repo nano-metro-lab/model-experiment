@@ -49,7 +49,7 @@ public class Line {
     StationNode sentinel = new StationNode(null);
     StationNode lastNode = sentinel;
     for (Station station : stations) {
-      StationNode node = findNode(station).orElseGet(() -> {
+      StationNode node = Optional.ofNullable(nodeMap.get(station)).orElseGet(() -> {
         StationNode newNode = new StationNode(station);
         nodeMap.put(station, newNode);
         station.addLine(Line.this);
@@ -89,23 +89,25 @@ public class Line {
   }
 
   private Stream<Route> findRoutes(StationType destinationType, Station station, UnaryOperator<StationNode> successor) {
-    StationNode routeStartNode = successor.apply(getNode(station));
-    if (routeStartNode == null) {
+    StationNode routeStartNode = Optional.ofNullable(nodeMap.get(station))
+      .orElseThrow(() -> new RuntimeException("station " + station + " is not on this line"));
+    StationNode routeNextNode = successor.apply(routeStartNode);
+    if (routeNextNode == null) {
       return Stream.empty();
     }
     {
-      StationNodeIterator nodeIterator = new StationNodeIterator(routeStartNode, successor);
+      StationNodeIterator nodeIterator = new StationNodeIterator(routeNextNode, successor);
       for (int distance = 1; nodeIterator.hasNext(); distance++) {
         StationNode node = nodeIterator.next();
         if (node.station.getType().equals(destinationType)) {
-          Route route = new Route(routeStartNode.station, node.station, distance, 0);
+          Route route = new Route(routeNextNode.station, node.station, distance, 0);
           return Stream.of(route);
         }
       }
     }
     List<Route> routes = new ArrayList<>();
     {
-      StationNodeIterator nodeIterator = new StationNodeIterator(routeStartNode, successor);
+      StationNodeIterator nodeIterator = new StationNodeIterator(routeNextNode, successor);
       for (int distance = 1; nodeIterator.hasNext(); distance++) {
         StationNode node = nodeIterator.next();
         List<Route> transferRoutes = node.station.getRoutes(destinationType);
@@ -114,20 +116,11 @@ public class Line {
         }
         int averageLength = Route.average(transferRoutes, Route::length);
         int averageTransfer = Route.average(transferRoutes, Route::transfer);
-        Route route = new Route(routeStartNode.station, node.station, distance + averageLength, 1 + averageTransfer);
+        Route route = new Route(routeNextNode.station, node.station, distance + averageLength, 1 + averageTransfer);
         routes.add(route);
       }
     }
     return getBestRoutes(routes, routeComparator);
-  }
-
-  private StationNode getNode(Station station) {
-    return findNode(station)
-      .orElseThrow(() -> new RuntimeException("station is not on this line"));
-  }
-
-  private Optional<StationNode> findNode(Station station) {
-    return Optional.ofNullable(nodeMap.get(station));
   }
 
   private static class StationNode {
