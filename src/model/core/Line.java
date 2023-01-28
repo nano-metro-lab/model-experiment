@@ -88,10 +88,11 @@ public class Line {
     }
     {
       StationNodeIterator nodeIterator = new StationNodeIterator(routeNextNode, successor);
-      for (int distance = 1; nodeIterator.hasNext(); distance++) {
+      while (nodeIterator.hasNext()) {
+        int nodeIndex = nodeIterator.nextIndex();
         StationNode node = nodeIterator.next();
         if (node.station.getType().equals(destinationType)) {
-          Route route = new Route(routeNextNode.station, node.station, distance, 0);
+          Route route = new Route(routeNextNode.station, node.station, nodeIndex + 1, 0);
           return Stream.of(route);
         }
       }
@@ -99,13 +100,13 @@ public class Line {
     List<Route> routes = new ArrayList<>();
     {
       StationNodeIterator nodeIterator = new StationNodeIterator(routeNextNode, successor);
-      for (int distance = 1; nodeIterator.hasNext(); distance++) {
+      while (nodeIterator.hasNext()) {
+        int nodeIndex = nodeIterator.nextIndex();
         StationNode node = nodeIterator.next();
-        int finalDistance = distance;
         node.station.getRoutes(destinationType)
           .forEach(transferRoute -> {
-            int length = finalDistance + transferRoute.length();
-            int transfer = 1 + transferRoute.transfer();
+            int length = transferRoute.length() + nodeIndex + 1;
+            int transfer = transferRoute.transfer() + 1;
             Route route = new Route(routeNextNode.station, node.station, length, transfer);
             routes.add(route);
           });
@@ -134,22 +135,28 @@ public class Line {
 
   private static class StationNodeIterator implements Iterator<StationNode> {
     private final UnaryOperator<StationNode> successor;
-    private StationNode current;
+    private StationNode next;
+    private int nextIndex;
 
-    StationNodeIterator(StationNode current, UnaryOperator<StationNode> successor) {
+    StationNodeIterator(StationNode next, UnaryOperator<StationNode> successor) {
       this.successor = successor;
-      this.current = current;
+      this.next = next;
+    }
+
+    int nextIndex() {
+      return nextIndex;
     }
 
     @Override
     public boolean hasNext() {
-      return current != null;
+      return next != null;
     }
 
     @Override
     public StationNode next() {
-      StationNode node = current;
-      current = successor.apply(current);
+      StationNode node = next;
+      next = successor.apply(next);
+      nextIndex++;
       return node;
     }
   }
