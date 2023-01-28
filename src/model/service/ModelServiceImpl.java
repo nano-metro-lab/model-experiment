@@ -16,7 +16,7 @@ public class ModelServiceImpl<StationId, LineId> implements ModelService<Station
 
   private static <K, V> V getValue(Map<K, V> map, K key) {
     return Optional.ofNullable(map.get(key))
-      .orElseThrow(() -> new RuntimeException(key + " does not exist"));
+      .orElseThrow(() -> new RuntimeException(key + " does not exist in model"));
   }
 
   @Override
