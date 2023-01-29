@@ -16,16 +16,10 @@ public class Line {
   private final Map<Station, StationNode> nodeMap = new HashMap<>();
   private boolean isFindingRoutes;
 
-  private static Stream<Route> getBestRoutes(List<Route> routes) {
-    if (routes.isEmpty()) {
-      return Stream.empty();
-    }
+  private static Stream<Route> getBestRoutes(Collection<Route> routes) {
     return routeComparators.stream()
-      .flatMap(routeComparator -> {
-        Route bestRoute = routes.stream().min(routeComparator).orElseThrow();
-        return routes.stream()
-          .filter(route -> route == bestRoute || routeComparator.compare(route, bestRoute) == 0);
-      }).distinct();
+      .flatMap(routeComparator -> Route.getBest(routes, routeComparator))
+      .distinct();
   }
 
   public void update(List<Station> stations) {
