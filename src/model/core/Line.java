@@ -5,13 +5,10 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 public class Line {
-  private static final List<Comparator<Route>> routeComparators;
-
-  static {
-    Comparator<Route> transferComparator = Comparator.comparingInt(Route::transfer);
-    Comparator<Route> lengthComparator = Comparator.comparingInt(Route::length);
-    routeComparators = List.of(transferComparator, lengthComparator);
-  }
+  private static final List<Comparator<Route>> routeComparators = List.of(
+    Comparator.comparingInt(Route::transfer),
+    Comparator.comparingInt(Route::length)
+  );
 
   private final Map<Station, StationNode> nodeMap = new HashMap<>();
   private boolean isFindingRoutes;
