@@ -1,16 +1,16 @@
 package model.service;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.stream.Stream;
 
 interface Dao<Id, Entity> {
   Entity get(Id id);
 
   Id getId(Entity entity);
 
-  List<Entity> getAll();
+  Stream<Entity> getAll();
 
-  List<Entity> getAll(Collection<Id> ids);
+  Stream<Entity> getAll(Collection<Id> ids);
 
   void add(Id id, Entity entity);
 

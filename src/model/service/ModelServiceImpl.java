@@ -35,10 +35,9 @@ public class ModelServiceImpl<StationId, LineId> implements ModelService<Station
   @Override
   public void updateLine(LineId id, List<StationId> stationIds) {
     Line line = lineDao.get(id);
-    line.update(stationDao.getAll(stationIds));
-    for (Station station : stationDao.getAll()) {
-      station.clearRoutesMap();
-    }
+    List<Station> stations = stationDao.getAll(stationIds).toList();
+    line.update(stations);
+    stationDao.getAll().forEach(Station::clearRoutesMap);
   }
 
   @Override

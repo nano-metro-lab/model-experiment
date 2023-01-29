@@ -1,6 +1,10 @@
 package model.service;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 class DaoImpl<Id, Entity> implements Dao<Id, Entity> {
   private final Map<Id, Entity> entityMap = new HashMap<>();
@@ -19,13 +23,13 @@ class DaoImpl<Id, Entity> implements Dao<Id, Entity> {
   }
 
   @Override
-  public List<Entity> getAll() {
-    return entityMap.values().stream().toList();
+  public Stream<Entity> getAll() {
+    return entityMap.values().stream();
   }
 
   @Override
-  public List<Entity> getAll(Collection<Id> ids) {
-    return ids.stream().map(this::get).toList();
+  public Stream<Entity> getAll(Collection<Id> ids) {
+    return ids.stream().map(DaoImpl.this::get);
   }
 
   @Override
