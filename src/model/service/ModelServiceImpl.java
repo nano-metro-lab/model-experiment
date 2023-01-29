@@ -4,65 +4,44 @@ import model.core.Line;
 import model.core.Station;
 import model.core.StationType;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 public class ModelServiceImpl<StationId, LineId> implements ModelService<StationId, LineId> {
-  private final Map<Station, StationId> stationIdMap = new HashMap<>();
-  private final Map<StationId, Station> stationMap = new HashMap<>();
-  private final Map<LineId, Line> lineMap = new HashMap<>();
-
-  private static <K, V> V getValue(Map<K, V> map, K key) {
-    return Optional.ofNullable(map.get(key))
-      .orElseThrow(() -> new RuntimeException(key + " does not exist in model"));
-  }
+  private final Dao<StationId, Station> stationDao = new DaoImpl<>();
+  private final Dao<LineId, Line> lineDao = new DaoImpl<>();
 
   @Override
   public List<StationId> findDestinations(StationType destinationType, StationId stationId, StationId nextStationId) {
-    Station station = getValue(stationMap, stationId);
-    Station nextStation = getValue(stationMap, nextStationId);
+    Station station = stationDao.get(stationId);
+    Station nextStation = stationDao.get(nextStationId);
     return station.getRoutes(destinationType)
       .filter(route -> route.next() == nextStation)
-      .map(route -> getValue(stationIdMap, route.last()))
+      .map(route -> stationDao.getId(route.last()))
       .toList();
   }
 
   @Override
   public void addStation(StationId id, StationType type) {
-    if (stationMap.containsKey(id)) {
-      throw new RuntimeException("station with id " + id + " already exists");
-    }
-    Station station = new Station(type);
-    stationIdMap.put(station, id);
-    stationMap.put(id, station);
+    stationDao.add(id, new Station(type));
   }
 
   @Override
   public void addLine(LineId id) {
-    if (lineMap.containsKey(id)) {
-      throw new RuntimeException("line with id " + id + " already exists");
-    }
-    lineMap.put(id, new Line());
+    lineDao.add(id, new Line());
   }
 
   @Override
   public void updateLine(LineId id, List<StationId> stationIds) {
-    Line line = getValue(lineMap, id);
-    List<Station> stations = stationIds.stream()
-      .map(stationId -> getValue(stationMap, stationId))
-      .toList();
-    line.update(stations);
-    for (Station station : stationMap.values()) {
+    Line line = lineDao.get(id);
+    line.update(stationDao.getAll(stationIds));
+    for (Station station : stationDao.getAll()) {
       station.clearRoutesMap();
     }
   }
 
   @Override
   public void reset() {
-    stationIdMap.clear();
-    stationMap.clear();
-    lineMap.clear();
+    stationDao.deleteAll();
+    lineDao.deleteAll();
   }
 }
