@@ -86,23 +86,16 @@ public class Line {
     if (routeNextNode == null) {
       return Stream.empty();
     }
-    {
-      StationNodeIterator nodeIterator = new StationNodeIterator(routeNextNode, successor);
-      while (nodeIterator.hasNext()) {
-        int nodeIndex = nodeIterator.nextIndex();
-        StationNode node = nodeIterator.next();
-        if (node.station.getType().equals(destinationType)) {
-          Route route = new Route(routeNextNode.station, node.station, nodeIndex + 1, 0);
-          return Stream.of(route);
-        }
-      }
-    }
     List<Route> routes = new ArrayList<>();
-    {
-      StationNodeIterator nodeIterator = new StationNodeIterator(routeNextNode, successor);
-      while (nodeIterator.hasNext()) {
-        int nodeIndex = nodeIterator.nextIndex();
-        StationNode node = nodeIterator.next();
+    StationNodeIterator nodeIterator = new StationNodeIterator(routeNextNode, successor);
+    while (nodeIterator.hasNext()) {
+      int nodeIndex = nodeIterator.nextIndex();
+      StationNode node = nodeIterator.next();
+      if (node.station.getType().equals(destinationType)) {
+        Route route = new Route(routeNextNode.station, node.station, nodeIndex + 1, 0);
+        routes.add(route);
+        break;
+      } else {
         node.station.getRoutes(destinationType)
           .forEach(transferRoute -> {
             int length = transferRoute.length() + nodeIndex + 1;
