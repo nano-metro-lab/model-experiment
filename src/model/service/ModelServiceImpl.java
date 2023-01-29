@@ -1,6 +1,7 @@
 package model.service;
 
 import model.core.Line;
+import model.core.Route;
 import model.core.Station;
 import model.core.StationType;
 
@@ -15,8 +16,9 @@ public class ModelServiceImpl<StationId, LineId> implements ModelService<Station
     Station station = stationDao.get(stationId);
     Station nextStation = stationDao.get(nextStationId);
     return station.getRoutes(destinationType)
-      .filter(route -> route.next() == nextStation)
-      .map(route -> stationDao.getId(route.last()))
+      .filter(Route.equalingTo(nextStation, Route::next))
+      .map(Route::last)
+      .map(stationDao::getId)
       .toList();
   }
 
