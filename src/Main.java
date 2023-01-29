@@ -4,7 +4,7 @@ import model.service.ModelServiceImpl;
 import java.util.List;
 
 enum StationType implements model.core.StationType {
-  CIRCLE, SQUARE, TRIANGLE
+  CIRCLE, TRIANGLE
 }
 
 public class Main {
@@ -12,32 +12,52 @@ public class Main {
     // can be used anywhere in the project
     var modelService = ModelServiceFactory.getInstance();
 
-    GraphicalStation stationCircle = new GraphicalStation(StationType.CIRCLE);
-    GraphicalStation stationSquare1 = new GraphicalStation(StationType.SQUARE);
-    GraphicalStation stationSquare2 = new GraphicalStation(StationType.SQUARE);
-    GraphicalStation stationTriangle1 = new GraphicalStation(StationType.TRIANGLE);
-    GraphicalStation stationTriangle2 = new GraphicalStation(StationType.TRIANGLE);
+    // ☻ ▬ ☻ ▬ ☻ ▬ ☻ ▬ ▲
+    //     ║   ┼
+    //     ☻   ▲
+    //     ║
+    //     ▲
 
-    List<GraphicalStation> stations = List.of(stationCircle, stationSquare1, stationSquare2, stationTriangle1, stationTriangle2);
+    GraphicalStation circleA0 = new GraphicalStation(StationType.CIRCLE);
+    GraphicalStation circleA1 = new GraphicalStation(StationType.CIRCLE);
+    GraphicalStation circleA2 = new GraphicalStation(StationType.CIRCLE);
+    GraphicalStation circleA3 = new GraphicalStation(StationType.CIRCLE);
+    GraphicalStation triangleA = new GraphicalStation(StationType.TRIANGLE);
+
+    GraphicalStation circleB = new GraphicalStation(StationType.CIRCLE);
+    GraphicalStation triangleB = new GraphicalStation(StationType.TRIANGLE);
+
+    GraphicalStation triangleC = new GraphicalStation(StationType.TRIANGLE);
+
+    List<GraphicalStation> stations = List.of(
+      circleA0,
+      circleA1,
+      circleA2,
+      circleA3,
+      triangleA,
+      circleB,
+      triangleB,
+      triangleC
+    );
     for (GraphicalStation station : stations) {
       modelService.addStation(station, station.getType());
     }
 
-    GraphicalLine lineCircleToSquare = new GraphicalLine();
-    modelService.addLine(lineCircleToSquare);
-    modelService.updateLine(lineCircleToSquare, List.of(stationCircle, stationSquare1, stationSquare2));
+    GraphicalLine lineA = new GraphicalLine();
+    modelService.addLine(lineA);
+    modelService.updateLine(lineA, List.of(circleA0, circleA1, circleA2, circleA3, triangleA));
 
-    GraphicalLine lineSquare2ToTriangle1 = new GraphicalLine();
-    modelService.addLine(lineSquare2ToTriangle1);
-    modelService.updateLine(lineSquare2ToTriangle1, List.of(stationSquare2, stationTriangle1));
+    GraphicalLine lineB = new GraphicalLine();
+    modelService.addLine(lineB);
+    modelService.updateLine(lineB, List.of(circleA1, circleB, triangleB));
 
-    GraphicalLine lineSquare2ToTriangle2 = new GraphicalLine();
-    modelService.addLine(lineSquare2ToTriangle2);
-    modelService.updateLine(lineSquare2ToTriangle2, List.of(stationSquare2, stationTriangle2));
+    GraphicalLine lineC = new GraphicalLine();
+    modelService.addLine(lineC);
+    modelService.updateLine(lineC, List.of(circleA2, triangleC));
 
-    List<GraphicalStation> transferStations = modelService.findDestinations(StationType.TRIANGLE, stationCircle, stationSquare1);
-    assert transferStations.size() == 1;
-    assert transferStations.get(0) == stationSquare2;
+    List<GraphicalStation> destinations = modelService.findDestinations(StationType.TRIANGLE, circleA0, circleA1);
+    assert destinations.size() == 3;
+    assert destinations.containsAll(List.of(circleA1, circleA2, triangleA));
 
     // when starts a new game
     modelService.reset();
