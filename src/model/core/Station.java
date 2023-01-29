@@ -1,6 +1,8 @@
 package model.core;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class Station {
@@ -37,13 +39,10 @@ public class Station {
 
     Stream<Route> get(StationType destinationType) {
       return Station.this.lines.stream()
-        .flatMap(line -> {
-          if (line.isFindingRoutes()) {
-            return Stream.empty();
-          }
-          LineRoutesMap lineRoutesMap = getLineRoutesMap(line);
-          return lineRoutesMap.get(destinationType).stream();
-        });
+        .filter(Predicate.not(Line::isFindingRoutes))
+        .map(RoutesMap.this::getLineRoutesMap)
+        .map(LineRoutesMap.getting(destinationType))
+        .flatMap(Collection::stream);
     }
 
     void clear() {
@@ -65,6 +64,10 @@ public class Station {
 
       LineRoutesMap(Line line) {
         this.line = line;
+      }
+
+      static Function<LineRoutesMap, List<Route>> getting(StationType destinationType) {
+        return lineRoutesMap -> lineRoutesMap.get(destinationType);
       }
 
       List<Route> get(StationType destinationType) {
