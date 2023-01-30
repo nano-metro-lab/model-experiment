@@ -1,4 +1,4 @@
-package model.core;
+package model.shared;
 
 public interface StationType {
 }

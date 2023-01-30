@@ -3,7 +3,7 @@ import model.service.ModelServiceImpl;
 
 import java.util.List;
 
-enum StationType implements model.core.StationType {
+enum StationType implements model.shared.StationType {
   CIRCLE, TRIANGLE
 }
 

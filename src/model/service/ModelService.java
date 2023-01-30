@@ -1,6 +1,6 @@
 package model.service;
 
-import model.core.StationType;
+import model.shared.StationType;
 
 import java.util.List;
 

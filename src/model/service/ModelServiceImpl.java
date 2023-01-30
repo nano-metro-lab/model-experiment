@@ -3,7 +3,7 @@ package model.service;
 import model.core.Line;
 import model.core.Route;
 import model.core.Station;
-import model.core.StationType;
+import model.shared.StationType;
 
 import java.util.List;
 

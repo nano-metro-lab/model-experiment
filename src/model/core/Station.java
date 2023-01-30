@@ -1,5 +1,7 @@
 package model.core;
 
+import model.shared.StationType;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
