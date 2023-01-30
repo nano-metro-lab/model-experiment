@@ -16,12 +16,16 @@ public record Route(
     return route -> keyExtractor.apply(route).equals(target);
   }
 
+  static Predicate<Route> equalingTo(Route target, Comparator<Route> comparator) {
+    return route -> route == target || comparator.compare(route, target) == 0;
+  }
+
   static Stream<Route> getBest(Collection<Route> routes, Comparator<Route> comparator) {
     Route bestRoute = routes.stream().min(comparator).orElse(null);
     if (bestRoute == null) {
       return Stream.empty();
     }
     return routes.stream()
-      .filter(route -> route == bestRoute || comparator.compare(route, bestRoute) == 0);
+      .filter(Route.equalingTo(bestRoute, comparator));
   }
 }
