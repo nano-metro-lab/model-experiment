@@ -10,6 +10,9 @@ class DaoImpl<Id, Entity> implements Dao<Id, Entity> {
   private final Map<Id, Entity> entityMap = new HashMap<>();
   private final Map<Entity, Id> idMap = new HashMap<>();
 
+  DaoImpl() {
+  }
+
   @Override
   public Entity get(Id id) {
     return Optional.ofNullable(entityMap.get(id))

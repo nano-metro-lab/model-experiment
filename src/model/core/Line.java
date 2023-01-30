@@ -13,6 +13,9 @@ public class Line {
   private final Map<Station, StationNode> nodeMap = new HashMap<>();
   private boolean isFindingRoutes;
 
+  public Line() {
+  }
+
   private static Stream<Route> getBestRoutes(Collection<Route> routes) {
     return routeComparators.stream()
       .flatMap((routeComparator) -> Route.getBest(routes, routeComparator))

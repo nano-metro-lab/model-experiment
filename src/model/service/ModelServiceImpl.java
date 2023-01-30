@@ -11,6 +11,9 @@ public class ModelServiceImpl<StationId, LineId> implements ModelService<Station
   private final Dao<StationId, Station> stationDao = new DaoImpl<>();
   private final Dao<LineId, Line> lineDao = new DaoImpl<>();
 
+  public ModelServiceImpl() {
+  }
+
   @Override
   public List<StationId> findDestinations(StationType destinationType, StationId stationId, StationId nextStationId) {
     Station station = stationDao.get(stationId);

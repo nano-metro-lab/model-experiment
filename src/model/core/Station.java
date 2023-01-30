@@ -37,6 +37,9 @@ public class Station {
   private class RoutesMap {
     private final Map<Line, LineRoutesMap> map = new HashMap<>();
 
+    RoutesMap() {
+    }
+
     Stream<Route> get(StationType destinationType) {
       return Station.this.lines.stream()
         .filter(Predicate.not(Line::isFindingRoutes))
