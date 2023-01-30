@@ -15,7 +15,7 @@ public class Line {
 
   private static Stream<Route> getBestRoutes(Collection<Route> routes) {
     return routeComparators.stream()
-      .flatMap(routeComparator -> Route.getBest(routes, routeComparator))
+      .flatMap((routeComparator) -> Route.getBest(routes, routeComparator))
       .distinct();
   }
 
@@ -88,7 +88,7 @@ public class Line {
         break;
       } else {
         node.station.getRoutes(destinationType)
-          .forEach(transferRoute -> {
+          .forEach((transferRoute) -> {
             int length = transferRoute.length() + nodeIndex + 1;
             int transfer = transferRoute.transfer() + 1;
             Route route = new Route(routeNextNode.station, node.station, length, transfer);

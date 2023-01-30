@@ -67,7 +67,7 @@ public class Station {
       }
 
       static Function<LineRoutesMap, List<Route>> getting(StationType destinationType) {
-        return lineRoutesMap -> lineRoutesMap.get(destinationType);
+        return (lineRoutesMap) -> lineRoutesMap.get(destinationType);
       }
 
       List<Route> get(StationType destinationType) {

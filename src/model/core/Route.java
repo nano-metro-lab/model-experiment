@@ -13,11 +13,11 @@ public record Route(
   int transfer
 ) {
   public static <T> Predicate<Route> equalingTo(T target, Function<Route, T> keyExtractor) {
-    return route -> keyExtractor.apply(route).equals(target);
+    return (route) -> keyExtractor.apply(route).equals(target);
   }
 
   static Predicate<Route> equalingTo(Route target, Comparator<Route> comparator) {
-    return route -> route == target || comparator.compare(route, target) == 0;
+    return (route) -> route == target || comparator.compare(route, target) == 0;
   }
 
   static Stream<Route> getBest(Collection<Route> routes, Comparator<Route> comparator) {
