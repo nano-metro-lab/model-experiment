@@ -4,3 +4,6 @@ out/
 
 ### Mac OS ###
 .DS_Store
+
+### Project ###
+doc/

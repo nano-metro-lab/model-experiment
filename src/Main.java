@@ -1,58 +1,101 @@
-import model.*;
+import model.service.ModelService;
+import model.service.ModelServiceImpl;
+
+import java.util.List;
+
+enum StationType implements model.shared.StationType {
+  CIRCLE, TRIANGLE
+}
 
 public class Main {
   public static void main(String[] args) {
-    Station stationCircle = new Station(StationType.CIRCLE);
-    Station stationSquare = new Station(StationType.SQUARE);
-    Station stationTriangle1 = new Station(StationType.TRIANGLE);
-    Station stationTriangle2 = new Station(StationType.TRIANGLE);
+    // can be used anywhere in the project
+    var modelService = ModelServiceFactory.getInstance();
 
-    new Passenger(stationCircle, StationType.TRIANGLE);
+    // ☻ ▬ ☻ ▬ ☻ ▬ ☻ ▬ ▲
+    //     ║   ┼
+    //     ☻   ▲
+    //     ║
+    //     ▲
 
-    Line lineCircleToSquare = new Line();
-    lineCircleToSquare.addStation(stationCircle);
-    lineCircleToSquare.addStation(stationSquare, stationCircle);
+    GraphicalStation circleA0 = new GraphicalStation(StationType.CIRCLE);
+    GraphicalStation circleA1 = new GraphicalStation(StationType.CIRCLE);
+    GraphicalStation circleA2 = new GraphicalStation(StationType.CIRCLE);
+    GraphicalStation circleA3 = new GraphicalStation(StationType.CIRCLE);
+    GraphicalStation triangleA = new GraphicalStation(StationType.TRIANGLE);
 
-    Line lineSquareToTriangle1 = new Line();
-    lineSquareToTriangle1.addStation(stationSquare);
-    lineSquareToTriangle1.addStation(stationTriangle1, stationSquare);
+    GraphicalStation circleB = new GraphicalStation(StationType.CIRCLE);
+    GraphicalStation triangleB = new GraphicalStation(StationType.TRIANGLE);
 
-    Line lineSquareToTriangle2 = new Line();
-    lineSquareToTriangle2.addStation(stationSquare);
-    lineSquareToTriangle2.addStation(stationTriangle2, stationSquare);
+    GraphicalStation triangleC = new GraphicalStation(StationType.TRIANGLE);
 
-    Train trainCircleToSquare = new Train(lineCircleToSquare, stationCircle);
-    Train trainSquareToTriangle1 = new Train(lineSquareToTriangle1, stationSquare);
-    Train trainSquareToTriangle2 = new Train(lineSquareToTriangle2, stationSquare);
+    List<GraphicalStation> stations = List.of(
+      circleA0,
+      circleA1,
+      circleA2,
+      circleA3,
+      triangleA,
+      circleB,
+      triangleB,
+      triangleC
+    );
+    for (GraphicalStation station : stations) {
+      modelService.addStation(station, station.getType());
+    }
 
-    trainCircleToSquare.start();
-    assert stationCircle.getPassengers().length == 0;
-    assert trainCircleToSquare.getPassengers().length > 0;
+    GraphicalLine lineA = new GraphicalLine();
+    modelService.addLine(lineA);
+    modelService.updateLine(lineA, List.of(circleA0, circleA1, circleA2, circleA3, triangleA));
 
-    trainCircleToSquare.stop();
-    assert trainCircleToSquare.getPassengers().length == 0;
-    assert stationSquare.getPassengers().length > 0;
+    GraphicalLine lineB = new GraphicalLine();
+    modelService.addLine(lineB);
+    modelService.updateLine(lineB, List.of(circleA1, circleB, triangleB));
 
-    trainSquareToTriangle1.start();
-    assert stationSquare.getPassengers().length == 0;
-    assert trainSquareToTriangle1.getPassengers().length > 0;
+    GraphicalLine lineC = new GraphicalLine();
+    modelService.addLine(lineC);
+    modelService.updateLine(lineC, List.of(circleA2, triangleC));
 
-    trainSquareToTriangle1.stop();
-    assert trainSquareToTriangle1.getPassengers().length == 0;
-    assert stationSquare.getPassengers().length == 0;
+    List<GraphicalStation> destinations = modelService.findDestinations(StationType.TRIANGLE, circleA0, circleA1);
+    assert destinations.size() == 3;
+    assert destinations.containsAll(List.of(circleA1, circleA2, triangleA));
 
-    trainCircleToSquare.start();
-    trainCircleToSquare.stop();
+    // when starts a new game
+    modelService.reset();
+  }
+}
 
-    new Passenger(stationCircle, StationType.TRIANGLE);
+@SuppressWarnings("ALL")
+class GraphicalStation {
+  private final StationType type;
+  private Object whateverAttribute;
 
-    trainCircleToSquare.start();
-    trainCircleToSquare.stop();
+  public GraphicalStation(StationType type) {
+    this.type = type;
+  }
 
-    trainSquareToTriangle2.start();
-    assert trainSquareToTriangle2.getPassengers().length > 0;
+  public StationType getType() {
+    return type;
+  }
 
-    trainSquareToTriangle2.stop();
-    assert trainSquareToTriangle2.getPassengers().length == 0;
+  public void whateverMethod() {
+  }
+}
+
+@SuppressWarnings("ALL")
+class GraphicalLine {
+  private Object whateverAttribute;
+
+  public void whateverMethod() {
+  }
+}
+
+class ModelServiceFactory {
+  private static ModelService<GraphicalStation, GraphicalLine> instance;
+
+  public static ModelService<GraphicalStation, GraphicalLine> getInstance() {
+    if (instance == null) {
+      instance = new ModelServiceImpl<>();
+    }
+    return instance;
   }
 }
